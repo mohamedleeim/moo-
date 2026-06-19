@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-brown: #1e2430; /* Elegant workspace deep-slate background for buttons */
+  --color-brand-gold: #fbbf24; /* Amber-gold contrast color */
+  --color-brand-terracotta: #fb923c; /* Warm terracotta highlight */
+  --color-brand-clay: #252930; /* Charcoal slate frame outline */
+}
+
+/* Layer Overrides to seamlessly map existing light themes (Stone/Slate) to the Elegant Dark Theme */
+
+/* Core body & canvas background colors */
+body, html {
+  background-color: #0f1115 !important;
+  color: #e5e7eb !important;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+#root, .app-container {
+  background-color: #0f1115 !important;
+}
+
+/* Global inputs and selectors overrides for perfect eye-safe dark form entry */
+input[type="text"], input[type="number"], select, textarea {
+  background-color: #0a0c10 !important;
+  color: #e5e7eb !important;
+  border: 1px solid #252930 !important;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+  border-color: #fbbf24 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px #fbbf24 !important;
+}
+
+/* Standard Stone references rewritten to Dark Slate Theme equivalents */
+.bg-stone-50 {
+  background-color: #0f1115 !important;
+}
+
+.bg-stone-100 {
+  background-color: #121419 !important;
+}
+
+.bg-stone-150 {
+  background-color: #1a1d24 !important;
+}
+
+.bg-stone-200 {
+  background-color: #1a1d22 !important;
+}
+
+.bg-stone-250 {
+  background-color: #252930 !important;
+}
+
+/* White background components mapped dynamically to cards */
+.bg-white {
+  background-color: #16191e !important;
+}
+
+/* Modifying navigation headers & sticky menus */
+header.bg-white {
+  background-color: #121419 !important;
+  border-bottom-color: #1a1d22 !important;
+}
+
+footer.bg-white {
+  background-color: #121419 !important;
+  border-top-color: #1a1d22 !important;
+}
+
+/* Row hover effect overlays */
+.bg-stone-50\/50, .bg-stone-50\/75, .bg-stone-50\/25, .hover\:bg-stone-50\/25:hover, .hover\:bg-stone-50\/50:hover {
+  background-color: rgba(18, 20, 25, 0.4) !important;
+}
+
+.hover\:bg-stone-50:hover {
+  background-color: #121419 !important;
+}
+
+.hover\:bg-stone-100:hover {
+  background-color: #1a1d22 !important;
+}
+
+.hover\:bg-stone-150:hover {
+  background-color: #252930 !important;
+}
+
+/* Deep Slate-based layouts */
+.bg-slate-50 { background-color: #0f1115 !important; }
+.bg-slate-100 { background-color: #121419 !important; }
+.bg-slate-800 { background-color: #16191e !important; }
+.bg-slate-900 { background-color: #0a0c10 !important; }
+
+/* Dynamic Borders mapping */
+.border-stone-100 { border-color: #121419 !important; }
+.border-stone-150 { border-color: #1a1d24 !important; }
+.border-stone-200 { border-color: #1a1d22 !important; }
+.border-stone-250 { border-color: #252930 !important; }
+.border-stone-300 { border-color: #252930 !important; }
+.border-stone-400 { border-color: #4b5563 !important; }
+
+/* Divide utility lines in structures */
+.divide-stone-150 > * + * { border-color: #1a1d24 !important; }
+.divide-stone-200 > * + * { border-color: #1a1d22 !important; }
+.divide-stone-250 > * + * { border-color: #252930 !important; }
+
+/* Text Overrides to guarantee perfect high accessibility contrast */
+.text-stone-900 { color: #f3f4f6 !important; }
+.text-stone-800 { color: #e5e7eb !important; }
+.text-stone-700 { color: #d1d5db !important; }
+.text-stone-600 { color: #9ca3af !important; }
+.text-stone-500 { color: #9ca3af !important; }
+.text-stone-400 { color: #6b7280 !important; }
+
+/* Positive / Emerald colors optimized to retain beautiful readability when in Dark Mode */
+.text-emerald-800, .text-emerald-700, .text-emerald-600 {
+  color: #34d399 !important; /* Elegant bright mint green */
+}
+.bg-emerald-50, .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+.text-emerald-950, .text-emerald-900 {
+  color: #a7f3d0 !important;
+}
+
+/* Warnings and Alerts text values */
+.bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+.text-amber-800 { color: #fde047 !important; }
+.text-amber-900 { color: #fef08a !important; }
+
+/* Danger & Deletions state coloring */
+.bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+.text-red-700, .text-red-800, .text-red-900 {
+  color: #fca5a5 !important;
+}
+
+/* High contrast white text items */
+.text-white {
+  color: #ffffff !important;
+}
+
+/* Layout spacing refinements, customized lists transitions */
+.bg-gradient-to-br.from-brand-brown.to-stone-900 {
+  background: linear-gradient(135deg, #16191e 0%, #121419 100%) !important;
+  border: 1px solid #252930 !important;
+}
+
+@layer utilities {
+  /* Printable parameters: Must be kept pristine on pure white backdrop for official Morrocan public administration copies */
+  @media print {
+    body, html, #root, .app-container {
+      background: white !important;
+      color: black !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .print-only {
+      display: block !important;
+    }
+    .print-card {
+      border: none !important;
+      background: white !important;
+      color: black !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .print-page-break {
+      page-break-after: always;
+    }
+    /* Restore normal color styles for print content so it is legible on paper */
+    input[type="text"], input[type="number"], select, textarea {
+      background-color: white !important;
+      color: black !important;
+      border: 1px solid #ccc !important;
+    }
+    .text-stone-900, .text-stone-800, .text-stone-700, .text-stone-600 {
+      color: black !important;
+    }
+  }
+}
+
+/* Custom scrollbar for beautiful dashboard lists */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.2); /* Elegant brand amber thumb */
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.5); /* Brand amber hover state */
+}

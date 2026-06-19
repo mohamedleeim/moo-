@@ -1,0 +1,6 @@
+{
+  "name": "Révision de Prix & Métré - Palier El Bahia",
+  "description": "Application de calcul pour le métré, le décompte et la révision des prix pour les travaux de reconstruction du palier El Bahia à Marrakech.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
