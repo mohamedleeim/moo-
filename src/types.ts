@@ -100,6 +100,49 @@ export interface GeneratedDecompte {
   notes?: string;
 }
 
+export type ExpenseCategory = 'materiel' | 'materiaux' | 'chauffeur' | 'droguerie' | 'pieces' | 'autre';
+
+export interface Expense {
+  id: string;
+  date: string; // YYYY-MM-DD
+  category: ExpenseCategory;
+  label: string; // Designation/supplier
+  amount: number;
+  quantity?: number;
+  unitPrice?: number;
+  remarks?: string;
+}
+
+export interface Worker {
+  id: string;
+  name: string;
+  role: string; // e.g. Macon, Chef de chantier, etc.
+  dailyRate: number; // Daily salary rate (MAD)
+  phone?: string;
+  cnssNumber?: string;
+}
+
+export interface WorkDayPointage {
+  workerId: string;
+  status: 'present' | 'demi-journee' | 'absent' | 'conge';
+  advancePaid?: number; // Advance payments on salary (avances)
+  remarks?: string;
+}
+
+export interface DailyPointage {
+  id: string;
+  date: string; // YYYY-MM-DD
+  pointages: WorkDayPointage[];
+  note?: string;
+}
+
+export interface WorkItemProgress {
+  itemId: string; // references WorkItem.id
+  progressPercentage: number; // 0 to 100
+  lastUpdated: string; // YYYY-MM-DD
+  remarks?: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -108,5 +151,9 @@ export interface Project {
   workItems: WorkItem[];
   measurementLines: MeasurementLine[];
   generatedDecomptes?: GeneratedDecompte[];
+  suiviTravaux?: WorkItemProgress[];
+  expenses?: Expense[];
+  workers?: Worker[];
+  pointages?: DailyPointage[];
 }
 

@@ -217,6 +217,37 @@ export default function ProjectManager({
     setEditingProjId(null);
   };
 
+  // Calculate cumulative stats across all projects
+  const globalBudget = projects.reduce((total, proj) => {
+    const projBudget = proj.workItems.reduce((acc, item) => {
+      const itemLines = (proj.measurementLines || []).filter(l => l.itemId === item.id);
+      const qty = itemLines.reduce((sum, line) => sum + line.computedValue, 0);
+      return acc + (qty * item.unitPrice);
+    }, 0);
+    return total + projBudget;
+  }, 0);
+
+  const globalWorkers = projects.reduce((total, proj) => total + (proj.workers?.length || 0), 0);
+  const globalExpenses = projects.reduce((total, proj) => {
+    const expTotal = proj.expenses?.reduce((acc, exp) => acc + exp.amount, 0) || 0;
+    // Add pointage timesheets wages
+    let wagesSum = 0;
+    (proj.pointages || []).forEach(dp => {
+      dp.pointages.forEach(pt => {
+        const worker = (proj.workers || []).find(w => w.id === pt.workerId);
+        if (worker) {
+          if (pt.status === "present") wagesSum += worker.dailyRate;
+          else if (pt.status === "demi-journee") wagesSum += (worker.dailyRate / 2);
+        }
+      });
+    });
+    return total + expTotal + wagesSum;
+  }, 0);
+
+  const formatMAD = (val: number) => {
+    return new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD" }).format(val);
+  };
+
   return (
     <div className="space-y-8 font-sans">
       
@@ -226,16 +257,49 @@ export default function ProjectManager({
           <Folder className="h-64 w-64" />
         </div>
         
-        <div className="max-w-3xl space-y-3 relative z-10">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-[#fbd27b] bg-[#fbd27b]/10 border border-[#fbd27b]/20 px-3 py-1 rounded-full font-bold">
-            Espace de Travail Moderne • لوحة مشاريع البناء
-          </span>
-          <h1 className="font-sans font-black text-xl md:text-2xl leading-none">
-            Gestion Globale des Projets de Construction
-          </h1>
-          <p className="text-stone-300 text-xs md:text-sm max-w-2xl font-light leading-relaxed">
-            Créez et configurez vos projets de travaux publics. Saisissez manuellement vos rubriques BPU sous forme d'articles, organisez l'arborescence des calculs de métré d'exécution par éléments d'ouvrages, et éditez instantanément les attachements, décomptes et révisions de prix.
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10">
+          <div className="lg:col-span-7 space-y-3">
+            <span className="text-[10px] uppercase font-mono tracking-widest text-[#fbd27b] bg-[#fbd27b]/10 border border-[#fbd27b]/20 px-3 py-1 rounded-full font-bold">
+              Espace de Travail Moderne • لوحة مشاريع البناء
+            </span>
+            <h1 className="font-sans font-black text-xl md:text-2xl leading-none text-[#fbd27b]">
+              Gestion Globale des Projets de Construction
+            </h1>
+            <p className="text-stone-300 text-xs md:text-sm max-w-2xl font-light leading-relaxed">
+              Planifiez, configurez vos projets publics et suivez l'évolution physique et budgétaire de vos chantiers. Saisissez vos rubriques de prix, organisez l'arborescence des métrés d'exécution, tenez le registre d'appel des équipes et maîtrisez la rentabilité.
+            </p>
+          </div>
+
+          {/* Combined analytical indicators */}
+          <div className="lg:col-span-5 grid grid-cols-2 gap-3 border-t lg:border-t-0 lg:border-l border-white/10 pt-4 lg:pt-0 lg:pl-6">
+            <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+              <span className="text-[8px] uppercase font-mono text-stone-400 block font-bold">Volume Budgétaire Total</span>
+              <strong className="text-xs md:text-sm font-mono font-black text-[#fbd27b] block mt-1">
+                {formatMAD(globalBudget)}
+              </strong>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+              <span className="text-[8px] uppercase font-mono text-stone-400 block font-bold">Chantiers Actifs</span>
+              <strong className="text-xs md:text-sm font-mono font-black text-[#fbd27b] block mt-1">
+                {projects.length} Projets
+              </strong>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+              <span className="text-[8px] uppercase font-mono text-stone-400 block font-bold">Ouvriers Enrôlés</span>
+              <strong className="text-xs md:text-sm font-mono font-black text-[#fbd27b] block mt-1">
+                {globalWorkers} Artisans
+              </strong>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+              <span className="text-[8px] uppercase font-mono text-stone-400 block font-bold">Dépenses Totales</span>
+              <strong className="text-xs md:text-sm font-mono font-black text-[#fbd27b] block mt-1">
+                {formatMAD(globalExpenses)}
+              </strong>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { WorkItem, MeasurementLine, ProjectDetails, Project, GeneratedDecompte } from "./types";
+import { WorkItem, MeasurementLine, ProjectDetails, Project, GeneratedDecompte, WorkItemProgress, Expense, Worker, DailyPointage } from "./types";
 import { 
   initialWorkItems, 
   initialMeasurementLines, 
@@ -13,6 +13,9 @@ import DecompteSummary from "./components/DecompteSummary";
 import RevisionPrix from "./components/RevisionPrix";
 import RapportPrint from "./components/RapportPrint";
 import ProjectManager from "./components/ProjectManager";
+import SuiviTravaux from "./components/SuiviTravaux";
+import GestionDepenses from "./components/GestionDepenses";
+import PointageOuvriers from "./components/PointageOuvriers";
 
 import { 
   Home, 
@@ -29,7 +32,8 @@ import {
   Menu,
   X,
   ArrowLeft,
-  FolderDot
+  FolderDot,
+  Users
 } from "lucide-react";
 
 export default function App() {
@@ -45,6 +49,10 @@ export default function App() {
   const [workItems, setWorkItems] = useState<WorkItem[]>([]);
   const [measurementLines, setMeasurementLines] = useState<MeasurementLine[]>([]);
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>(defaultProjectDetails);
+  const [suiviTravaux, setSuiviTravaux] = useState<WorkItemProgress[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [workers, setWorkers] = useState<Worker[]>([]);
+  const [pointages, setPointages] = useState<DailyPointage[]>([]);
 
   // 1. Initial State Hydration (Local Storage first policy)
   useEffect(() => {
@@ -69,7 +77,45 @@ export default function App() {
         description: "Restauration monument historique, Palais El Bahia Marrakech",
         details: defaultProjectDetails,
         workItems: initialWorkItems,
-        measurementLines: initialMeasurementLines
+        measurementLines: initialMeasurementLines,
+        suiviTravaux: [
+          { itemId: "item-1", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Fouilles terminées conformément à l'arborescence des calculs." },
+          { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Démolition de l'ancien palier dégradé achevée." },
+          { itemId: "item-3", progressPercentage: 40, lastUpdated: "2026-06-19", remarks: "Coulage des semelles S1 fait. Coffrage des chaînages en cours." }
+        ],
+        workers: [
+          { id: "W1", name: "Maâlem Driss", role: "Maçon Zelligeur", dailyRate: 220, phone: "+212 612 345 678" },
+          { id: "W2", name: "Maâlem Rachid", role: "Maçon Plâtrier", dailyRate: 200, phone: "+212 698 765 432" },
+          { id: "W3", name: "Abdeljalil", role: "Manœuvre", dailyRate: 120, phone: "+212 645 112 233" }
+        ],
+        pointages: [
+          {
+            id: "ptg-seed-1",
+            date: "2026-06-18",
+            pointages: [
+              { workerId: "W1", status: "present", advancePaid: 50 },
+              { workerId: "W2", status: "present", advancePaid: 0 },
+              { workerId: "W3", status: "present", advancePaid: 0 }
+            ],
+            note: "Appel de la journée du 18 juin. Tout le monde présent."
+          },
+          {
+            id: "ptg-seed-2",
+            date: "2026-06-19",
+            pointages: [
+              { workerId: "W1", status: "present", advancePaid: 0 },
+              { workerId: "W2", status: "present", advancePaid: 20 },
+              { workerId: "W3", status: "demi-journee", advancePaid: 0 }
+            ],
+            note: "Abdeljalil parti à mi-journée pour motif médical."
+          }
+        ],
+        expenses: [
+          { id: "exp-seed-1", date: "2026-06-15", category: "materiaux", label: "5 tonnes de chaux hydraulique", amount: 2500, quantity: 5, unitPrice: 500, remarks: "Fournisseur Chaux Tensift" },
+          { id: "exp-seed-2", date: "2026-06-16", category: "materiaux", label: "20 m² de dalles de Bejmat pré-cuit ocre", amount: 1800, quantity: 20, unitPrice: 90, remarks: "Atelier Artisanal Géliz" },
+          { id: "exp-seed-3", date: "2026-06-17", category: "chauffeur", label: "Livraison matériaux et trajets chantier", amount: 450, remarks: "Camion Benne Omar" },
+          { id: "exp-seed-4", date: "2026-06-18", category: "droguerie", label: "Droguerie : Acides, colles, brosses, clous et fils d'attache", amount: 270, remarks: "Droguerie Bab Doukkala" }
+        ]
       };
       loadedProjects = [defaultProjectRec];
       localStorage.setItem("bahia_multi_projects", JSON.stringify(loadedProjects));
@@ -92,6 +138,10 @@ export default function App() {
         setWorkItems(activeProj.workItems || []);
         setMeasurementLines(activeProj.measurementLines || []);
         setProjectDetails(activeProj.details || defaultProjectDetails);
+        setSuiviTravaux(activeProj.suiviTravaux || []);
+        setExpenses(activeProj.expenses || []);
+        setWorkers(activeProj.workers || []);
+        setPointages(activeProj.pointages || []);
       }
       localStorage.setItem("bahia_selected_project_id", selectedProjectId);
     } else {
@@ -127,6 +177,50 @@ export default function App() {
     if (selectedProjectId) {
       setProjects(prev => {
         const next = prev.map(p => p.id === selectedProjectId ? { ...p, details: newDetails, name: newDetails.title } : p);
+        localStorage.setItem("bahia_multi_projects", JSON.stringify(next));
+        return next;
+      });
+    }
+  };
+
+  const handleUpdateSuivi = (newSuivi: WorkItemProgress[]) => {
+    setSuiviTravaux(newSuivi);
+    if (selectedProjectId) {
+      setProjects(prev => {
+        const next = prev.map(p => p.id === selectedProjectId ? { ...p, suiviTravaux: newSuivi } : p);
+        localStorage.setItem("bahia_multi_projects", JSON.stringify(next));
+        return next;
+      });
+    }
+  };
+
+  const handleUpdateExpenses = (newExpenses: Expense[]) => {
+    setExpenses(newExpenses);
+    if (selectedProjectId) {
+      setProjects(prev => {
+        const next = prev.map(p => p.id === selectedProjectId ? { ...p, expenses: newExpenses } : p);
+        localStorage.setItem("bahia_multi_projects", JSON.stringify(next));
+        return next;
+      });
+    }
+  };
+
+  const handleUpdateWorkers = (newWorkers: Worker[]) => {
+    setWorkers(newWorkers);
+    if (selectedProjectId) {
+      setProjects(prev => {
+        const next = prev.map(p => p.id === selectedProjectId ? { ...p, workers: newWorkers } : p);
+        localStorage.setItem("bahia_multi_projects", JSON.stringify(next));
+        return next;
+      });
+    }
+  };
+
+  const handleUpdatePointages = (newPointages: DailyPointage[]) => {
+    setPointages(newPointages);
+    if (selectedProjectId) {
+      setProjects(prev => {
+        const next = prev.map(p => p.id === selectedProjectId ? { ...p, pointages: newPointages } : p);
         localStorage.setItem("bahia_multi_projects", JSON.stringify(next));
         return next;
       });
@@ -215,13 +309,55 @@ export default function App() {
         description: "Restauration monument historique, Palais El Bahia Marrakech",
         details: defaultProjectDetails,
         workItems: initialWorkItems,
-        measurementLines: initialMeasurementLines
+        measurementLines: initialMeasurementLines,
+        suiviTravaux: [
+          { itemId: "item-1", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Fouilles terminées conformément à l'arborescence des calculs." },
+          { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Démolition de l'ancien palier dégradé achevée." },
+          { itemId: "item-3", progressPercentage: 40, lastUpdated: "2026-06-19", remarks: "Coulage des semelles S1 fait. Coffrage des chaînages en cours." }
+        ],
+        workers: [
+          { id: "W1", name: "Maâlem Driss", role: "Maçon Zelligeur", dailyRate: 220, phone: "+212 612 345 678" },
+          { id: "W2", name: "Maâlem Rachid", role: "Maçon Plâtrier", dailyRate: 200, phone: "+212 698 765 432" },
+          { id: "W3", name: "Abdeljalil", role: "Manœuvre", dailyRate: 120, phone: "+212 645 112 233" }
+        ],
+        pointages: [
+          {
+            id: "ptg-seed-1",
+            date: "2026-06-18",
+            pointages: [
+              { workerId: "W1", status: "present", advancePaid: 50 },
+              { workerId: "W2", status: "present", advancePaid: 0 },
+              { workerId: "W3", status: "present", advancePaid: 0 }
+            ],
+            note: "Appel de la journée du 18 juin. Tout le monde présent."
+          },
+          {
+            id: "ptg-seed-2",
+            date: "2026-06-19",
+            pointages: [
+              { workerId: "W1", status: "present", advancePaid: 0 },
+              { workerId: "W2", status: "present", advancePaid: 20 },
+              { workerId: "W3", status: "demi-journee", advancePaid: 0 }
+            ],
+            note: "Abdeljalil parti à mi-journée pour motif médical."
+          }
+        ],
+        expenses: [
+          { id: "exp-seed-1", date: "2026-06-15", category: "materiaux", label: "5 tonnes de chaux hydraulique", amount: 2500, quantity: 5, unitPrice: 500, remarks: "Fournisseur Chaux Tensift" },
+          { id: "exp-seed-2", date: "2026-06-16", category: "materiaux", label: "20 m² de dalles de Bejmat pré-cuit ocre", amount: 1800, quantity: 20, unitPrice: 90, remarks: "Atelier Artisanal Géliz" },
+          { id: "exp-seed-3", date: "2026-06-17", category: "chauffeur", label: "Livraison matériaux et trajets chantier", amount: 450, remarks: "Camion Benne Omar" },
+          { id: "exp-seed-4", date: "2026-06-18", category: "droguerie", label: "Droguerie : Acides, colles, brosses, clous et fils d'attache", amount: 270, remarks: "Droguerie Bab Doukkala" }
+        ]
       };
       setProjects([defaultProj]);
       setSelectedProjectId("project-bahia");
       setWorkItems(initialWorkItems);
       setMeasurementLines(initialMeasurementLines);
       setProjectDetails(defaultProjectDetails);
+      setSuiviTravaux(defaultProj.suiviTravaux || []);
+      setExpenses(defaultProj.expenses || []);
+      setWorkers(defaultProj.workers || []);
+      setPointages(defaultProj.pointages || []);
       setActiveTab("metre");
       localStorage.setItem("bahia_multi_projects", JSON.stringify([defaultProj]));
       localStorage.setItem("bahia_selected_project_id", "project-bahia");
@@ -351,6 +487,39 @@ export default function App() {
             calcItemTotalQuantity={calcItemTotalQuantity}
           />
         );
+      case "suivi":
+        return (
+          <SuiviTravaux
+            workItems={workItems}
+            suiviTravaux={suiviTravaux}
+            onUpdateSuivi={handleUpdateSuivi}
+            calcItemTotalQuantity={calcItemTotalQuantity}
+          />
+        );
+      case "expenses": {
+        const estimatedRev = workItems.reduce((acc, item) => {
+          const qty = calcItemTotalQuantity(item.id);
+          return acc + (qty * item.unitPrice);
+        }, 0);
+        return (
+          <GestionDepenses
+            expenses={expenses}
+            onUpdateExpenses={handleUpdateExpenses}
+            estimatedRevenue={estimatedRev}
+            workers={workers}
+            pointages={pointages}
+          />
+        );
+      }
+      case "pointage":
+        return (
+          <PointageOuvriers
+            workers={workers}
+            pointages={pointages}
+            onUpdateWorkers={handleUpdateWorkers}
+            onUpdatePointages={handleUpdatePointages}
+          />
+        );
       case "print":
         return (
           <RapportPrint 
@@ -371,7 +540,10 @@ export default function App() {
     { id: "metre", label: "Métré (المتر)", icon: Compass },
     { id: "bpu", label: "Attachement (المرفقات)", icon: Coins },
     { id: "decompte", label: "Décompte (الحساب)", icon: FileSpreadsheet },
-    { id: "revision", label: "Révision de Prix (مراجعة الأسعار)", icon: TrendingUp },
+    { id: "revision", label: "Révision (مراجعة الأسعار)", icon: TrendingUp },
+    { id: "suivi", label: "Suivi des travaux (الأشغال)", icon: FolderDot },
+    { id: "expenses", label: "Dépenses (المصاريف)", icon: Coins },
+    { id: "pointage", label: "Pointage (العمال)", icon: Users },
     { id: "dashboard", label: "Aperçu (الأولى)", icon: Home },
   ];
 
