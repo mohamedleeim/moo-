@@ -959,7 +959,7 @@ export const defaultProjectDetails: ProjectDetails = {
   revisionIndexValue: 249.0,
   fixedPart: 0.15,
   revisedPart: 0.85,
-  odscDate: "2024-09-15",
+  odscDate: "2024-09-30",
   workStops: [
     {
       id: "stop-1",
@@ -984,6 +984,43 @@ export const defaultProjectDetails: ProjectDetails = {
       stopDate: "2025-05-22",
       resumeDate: "2025-06-21",
       reason: "Arrêt des Travaux réglementaire N°4"
+    }
+  ],
+  decomptesRevisions: [
+    {
+      id: "dp-1",
+      name: "DP1",
+      date: "2024-12-19",
+      amount: 569983.40,
+      isCumulative: true
+    },
+    {
+      id: "dp-2",
+      name: "DP2",
+      date: "2025-01-10",
+      amount: 1359020.00,
+      isCumulative: true
+    },
+    {
+      id: "dp-3",
+      name: "DP3",
+      date: "2025-03-19",
+      amount: 3234048.95,
+      isCumulative: true
+    },
+    {
+      id: "dp-4",
+      name: "DP4",
+      date: "2025-04-30",
+      amount: 4378487.35,
+      isCumulative: true
+    },
+    {
+      id: "dp-5",
+      name: "DP5",
+      date: "2025-06-25",
+      amount: 5062827.20,
+      isCumulative: true
     }
   ]
 };
