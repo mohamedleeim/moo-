@@ -3,357 +3,1014 @@ import { WorkItem, MeasurementLine, ProjectDetails, IndexHistory } from "../type
 export const initialWorkItems: WorkItem[] = [
   {
     id: "item-1",
-    code: "1.1",
-    category: "01 - Terrassements & Démolitions",
-    description: "Fouilles en excavation ou en tranchées de largeur < 2m dans un terrain de consistance moyenne pour les fondations du palier.",
-    unit: "m³",
-    unitPrice: 120.00,
-    contractQuantity: 10.0
+    code: "1.01",
+    category: "01 - GROS OEUVRE-REVETEMENT-ETANCHEITE",
+    description: "Installation du chantier, matériel, bureau de chantier et toutes sujétions de mise en place.",
+    unit: "Ens",
+    unitPrice: 25000.00,
+    contractQuantity: 1.0
   },
   {
     id: "item-2",
-    code: "1.2",
-    category: "01 - Terrassements & Démolitions",
-    description: "Démolition délicate de la maçonnerie de briques dégradées constituant l'ancien palier fissuré, y compris tri des matériaux réutilisables.",
-    unit: "m³",
+    code: "1.02",
+    category: "01 - GROS OEUVRE-REVETEMENT-ETANCHEITE",
+    description: "Etayage et renforcement de l'étayement existant pour sécurité des plafonds, murs et arcades historiques.",
+    unit: "M2",
     unitPrice: 180.00,
-    contractQuantity: 5.0
+    contractQuantity: 500.00
   },
   {
     id: "item-3",
-    code: "2.1",
-    category: "02 - Gros Œuvre & Structure",
-    description: "Béton armé dosé à 350 kg/m³ pour semelle de fondation, longrines et chaînages de soutien du palier.",
-    unit: "m³",
-    unitPrice: 1600.00,
-    contractQuantity: 12.0
+    code: "1.03",
+    category: "01 - GROS OEUVRE-REVETEMENT-ETANCHEITE",
+    description: "Protection des éléments décoratifs existants en plâtre sculpté par des plaques d'éponge de 1 cm d'épaisseur et des lames en plastique y compris fixation et Entretien jusqu'à achèvement des travaux.",
+    unit: "M2",
+    unitPrice: 280.00,
+    contractQuantity: 250.00
   },
   {
     id: "item-4",
-    code: "2.2",
-    category: "02 - Gros Œuvre & Structure",
-    description: "Maçonnerie traditionnelle de briques cuites locales (briques pleines de Marrakech) hourdées au mortier de chaux hydraulique pour murs d'appui.",
-    unit: "m³",
-    unitPrice: 550.00,
-    contractQuantity: 15.0
+    code: "1.04",
+    category: "01 - GROS OEUVRE-REVETEMENT-ETANCHEITE",
+    description: "Protection des éléments décoratifs existants en bois sculpté et/ou peint de structure, de menuiserie ou de décor par des plaques d'éponge de 1 cm d'épaisseur et des lames en plastique y compris fixation et Entretien.",
+    unit: "M2",
+    unitPrice: 350.00,
+    contractQuantity: 1200.00
   },
   {
     id: "item-5",
-    code: "3.1",
-    category: "03 - Revêtements & Zelliges",
-    description: "Fourniture et pose de revêtement de sol en Bejmat traditionnel de Marrakech (carreaux de terre cuite naturelle), posés sur lit de mortier.",
-    unit: "m²",
-    unitPrice: 380.00,
-    contractQuantity: 25.0
+    code: "1.05",
+    category: "01 - GROS OEUVRE-REVETEMENT-ETANCHEITE",
+    description: "Protection des éléments décoratifs existants en Zellij sur mur et poteaux par des plaques d'éponge de 1 cm d'épaisseur et des lames en plastique y compris fixation et Entretien jusqu'à achèvement des travaux.",
+    unit: "M2",
+    unitPrice: 220.00,
+    contractQuantity: 300.00
   },
   {
     id: "item-6",
-    code: "3.2",
-    category: "03 - Revêtements & Zelliges",
-    description: "Zellij traditionnel ciselé à la main, assemblé suivant calepinage historique pour la contremarche et la décoration de bordure du palier.",
-    unit: "m²",
-    unitPrice: 1100.00,
-    contractQuantity: 10.0
+    code: "1.06",
+    category: "01 - GROS OEUVRE-REVETEMENT-ETANCHEITE",
+    description: "Protection des éléments décoratifs existants en zellij ou marbre sur sol, marches et contre marches par des lames en plastique y compris fixation par un revêtement en plâtre et Entretien jusqu'à achèvement des travaux.",
+    unit: "M2",
+    unitPrice: 150.00,
+    contractQuantity: 1500.00
   },
   {
     id: "item-7",
-    code: "4.1",
-    category: "04 - Enduits de Restauration",
-    description: "Enduit traditionnel à base de chaux aérienne éteinte en 3 couches (gobetis, corps d'enduit et couche de finition lissée).",
-    unit: "m²",
-    unitPrice: 160.00,
-    contractQuantity: 30.0
+    code: "2.01",
+    category: "02 - DEMOLITION & DEPOSE",
+    description: "Murs en maçonnerie de briques pleines, Moellons, Pisé ou mixtes de toutes épaisseurs y compris évacuation.",
+    unit: "M3",
+    unitPrice: 350.00,
+    contractQuantity: 30.00
   },
   {
     id: "item-8",
-    code: "4.2",
-    category: "04 - Enduits de Restauration",
-    description: "Enduit de finition de type Tadelakt Marrakech traditionnel, serré au galet de rivière et traité au savon noir de façon artisanale.",
-    unit: "m²",
-    unitPrice: 280.00,
-    contractQuantity: 20.0
+    code: "2.02",
+    category: "02 - DEMOLITION & DEPOSE",
+    description: "Murs en agglos ou brique creuse, de cloisons non-structurelles pour réaménagement.",
+    unit: "M2",
+    unitPrice: 90.00,
+    contractQuantity: 100.00
   },
   {
     id: "item-9",
-    code: "5.1",
-    category: "05 - Équipement & Ouvrages Bois",
-    description: "Garde-corps de protection en fer forgé traditionnel clouté à la main, peint à l'oxyde noir satiné suivant dessin historique approuvé.",
-    unit: "ml",
-    unitPrice: 2200.00,
-    contractQuantity: 5.0
+    code: "2.04",
+    category: "02 - DEMOLITION & DEPOSE",
+    description: "Décapage de revêtement Sol défectueux existant de toute nature y/c forme de pente, chape d’accrochage et plinthe.",
+    unit: "M2",
+    unitPrice: 110.00,
+    contractQuantity: 500.00
   },
   {
     id: "item-10",
-    code: "5.2",
-    category: "05 - Équipement & Ouvrages Bois",
-    description: "Restauration ou remplacement d'éléments structuraux secondaires de calage en bois de Cèdre de l'Atlas sculpté et traité thermiquement.",
-    unit: "U",
-    unitPrice: 3500.00,
-    contractQuantity: 4.0
+    code: "2.07",
+    category: "02 - DEMOLITION & DEPOSE",
+    description: "Dépose tuiles vertes détériorées existantes y/c chape d'accrochage pour remplacement à l'identique.",
+    unit: "M2",
+    unitPrice: 140.00,
+    contractQuantity: 600.00
   }
 ];
 
 export const initialMeasurementLines: MeasurementLine[] = [
-  // Excavation
+  // 1.01 Installation du chantier
   {
-    id: "m-1",
+    id: "m-1-1",
     itemId: "item-1",
-    label: "Fouille pour semelle isolée Axe Nord (S1)",
-    coefficient: 2,
-    length: 1.20,
-    width: 1.20,
-    height: 1.50,
-    computedValue: 4.32
-  },
-  {
-    id: "m-2",
-    itemId: "item-1",
-    label: "Fouille en tranchée pour mur de soutènement",
+    label: "Installation générale de base",
     coefficient: 1,
-    length: 5.60,
-    width: 0.60,
-    height: 1.20,
-    computedValue: 4.032
+    length: 0.4,
+    computedValue: 0.40
   },
-  // Demolition
+
+  // 1.02 Etayage (Total 495.69)
   {
-    id: "m-3",
+    id: "m-2-1",
     itemId: "item-2",
-    label: "Démolition de la chape et du revêtement ancien",
+    label: "Qoba Entrée principale droite",
     coefficient: 1,
-    length: 5.60,
+    length: 10.7,
+    height: 2.88,
+    computedValue: 30.82
+  },
+  {
+    id: "m-2-2",
+    itemId: "item-2",
+    label: "chambre 1",
+    coefficient: 1,
+    length: 2.5,
+    height: 2.77,
+    computedValue: 6.93
+  },
+  {
+    id: "m-2-3",
+    itemId: "item-2",
+    label: "chambre 2",
+    coefficient: 1,
+    length: 2.49,
+    height: 2.71,
+    computedValue: 6.75
+  },
+  {
+    id: "m-2-4",
+    itemId: "item-2",
+    label: "Grand qoba droite",
+    coefficient: 1,
+    length: 15.1,
+    height: 4.8,
+    computedValue: 72.48
+  },
+  {
+    id: "m-2-5",
+    itemId: "item-2",
+    label: "Facade Exterieur du qoba Entrée principale droite",
+    coefficient: 1,
+    length: 4.07,
+    height: 3.9,
+    computedValue: 15.87
+  },
+  {
+    id: "m-2-6",
+    itemId: "item-2",
+    label: "Couloire cote grand qoba droite",
+    coefficient: 1,
+    length: 5.8,
+    height: 1.78,
+    computedValue: 10.32
+  },
+  {
+    id: "m-2-7",
+    itemId: "item-2",
+    label: "Petite qoba droite",
+    coefficient: 1,
+    length: 2.32,
+    height: 2.77,
+    computedValue: 6.43
+  },
+  {
+    id: "m-2-8",
+    itemId: "item-2",
+    label: "La grande cour en Marbre - Mur 1",
+    coefficient: 1,
+    length: 36,
+    height: 3.4,
+    computedValue: 122.40
+  },
+  {
+    id: "m-2-9",
+    itemId: "item-2",
+    label: "Qoba a cote du hemame",
+    coefficient: 1,
+    length: 9.4,
+    height: 3.9,
+    computedValue: 36.66
+  },
+  {
+    id: "m-2-10",
+    itemId: "item-2",
+    label: "Mur exterieur du Couloir cote grand qoba droite",
+    coefficient: 1,
+    length: 1.1,
+    height: 4,
+    computedValue: 4.40
+  },
+  {
+    id: "m-2-11",
+    itemId: "item-2",
+    label: "Sous sol Salle de favorite - partie 1",
+    coefficient: 1,
+    length: 5,
+    height: 2.45,
+    computedValue: 12.25
+  },
+  {
+    id: "m-2-12",
+    itemId: "item-2",
+    label: "Sous sol Salle de favorite - partie 2",
+    coefficient: 1,
+    length: 2.5,
+    height: 2.95,
+    computedValue: 7.38
+  },
+  {
+    id: "m-2-13",
+    itemId: "item-2",
+    label: "Salle d'honneur",
+    coefficient: 1,
+    length: 21.7,
+    height: 6.9,
+    computedValue: 149.73
+  },
+  {
+    id: "m-2-14",
+    itemId: "item-2",
+    label: "Cuisine du maison de voisin",
+    coefficient: 1,
+    length: 3.4,
+    height: 2.54,
+    computedValue: 8.64
+  },
+  {
+    id: "m-2-15",
+    itemId: "item-2",
+    label: "Entrée maison du voisin",
+    coefficient: 1,
+    length: 1.83,
+    height: 2.54,
+    computedValue: 4.65
+  },
+
+  // 1.03 Protection Plâtre sculpté (Total 204.91)
+  {
+    id: "m-3-1",
+    itemId: "item-3",
+    label: "Qoba Droite Entrée principale, Bande platre inf - Mur 1",
+    coefficient: 1,
+    length: 2.78,
+    width: 0.20,
+    computedValue: 0.56
+  },
+  {
+    id: "m-3-2",
+    itemId: "item-3",
+    label: "Mur 2",
+    coefficient: 1,
+    length: 0.7,
+    width: 0.20,
+    computedValue: 0.14
+  },
+  {
+    id: "m-3-3",
+    itemId: "item-3",
+    label: "Mur 2 bails",
+    coefficient: 1,
+    length: 0.83,
+    width: 0.20,
+    computedValue: 0.17
+  },
+  {
+    id: "m-3-4",
+    itemId: "item-3",
+    label: "Mur 3",
+    coefficient: 1,
+    length: 2.72,
+    width: 1.20,
+    computedValue: 3.26
+  },
+  {
+    id: "m-3-5",
+    itemId: "item-3",
+    label: "Mur 4",
+    coefficient: 1,
+    length: 10.6,
+    width: 0.20,
+    computedValue: 2.12
+  },
+  {
+    id: "m-3-6",
+    itemId: "item-3",
+    label: "Cadre superieur du porte",
+    coefficient: 1,
+    length: 1.75,
+    width: 0.77,
+    computedValue: 1.35
+  },
+  {
+    id: "m-3-7",
+    itemId: "item-3",
+    label: "Cadre superieur du porte 2",
+    coefficient: 1,
+    length: 2.63,
+    width: 2.36,
+    computedValue: 6.21
+  },
+  {
+    id: "m-3-8",
+    itemId: "item-3",
+    label: "Bande de platre Superieur - Mur 1",
+    coefficient: 1,
+    length: 2.78,
+    width: 0.40,
+    computedValue: 1.11
+  },
+  {
+    id: "m-3-9",
+    itemId: "item-3",
+    label: "Bande de platre Superieur - Mur 2",
+    coefficient: 1,
+    length: 10.6,
+    width: 0.40,
+    computedValue: 4.24
+  },
+  {
+    id: "m-3-10",
+    itemId: "item-3",
+    label: "Bande de platre Superieur - Mur 3",
+    coefficient: 1,
+    length: 2.72,
+    width: 0.40,
+    computedValue: 1.09
+  },
+  {
+    id: "m-3-11",
+    itemId: "item-3",
+    label: "Bande de platre Superieur - Mur 4",
+    coefficient: 1,
+    length: 10.6,
+    width: 0.40,
+    computedValue: 4.24
+  },
+  {
+    id: "m-3-12",
+    itemId: "item-3",
+    label: "Bails exterieur 1",
+    coefficient: 1,
+    length: 0.82,
+    width: 0.20,
+    computedValue: 0.16
+  },
+  {
+    id: "m-3-13",
+    itemId: "item-3",
+    label: "Bails exterieur 2",
+    coefficient: 1,
+    length: 0.74,
+    width: 1.20,
+    computedValue: 0.89
+  },
+  {
+    id: "m-3-14",
+    itemId: "item-3",
+    label: "Bails exterieur 3",
+    coefficient: 1,
+    length: 0.77,
     width: 2.20,
-    height: 0.25,
+    computedValue: 1.69
+  },
+  {
+    id: "m-3-15",
+    itemId: "item-3",
+    label: "Bails exterieur 4",
+    coefficient: 1,
+    length: 0.73,
+    width: 3.20,
+    computedValue: 2.34
+  },
+  {
+    id: "m-3-16",
+    itemId: "item-3",
+    label: "Grand QOBA DROITE, Bande platre inf - Mur 1",
+    coefficient: 1,
+    length: 4.8,
+    width: 0.22,
+    computedValue: 1.06
+  },
+  {
+    id: "m-3-17",
+    itemId: "item-3",
+    label: "Grand QOBA DROITE, Bande platre inf - Mur 2",
+    coefficient: 1,
+    length: 4.74,
+    width: 0.22,
+    computedValue: 1.04
+  },
+  {
+    id: "m-3-18",
+    itemId: "item-3",
+    label: "Grand QOBA DROITE, Bande platre inf - Mur 3",
+    coefficient: 1,
+    length: 15.1,
+    width: 0.22,
+    computedValue: 3.32
+  },
+  {
+    id: "m-3-19",
+    itemId: "item-3",
+    label: "Complément de protection du plâtre (Qoba gauche, salons)",
+    coefficient: 1,
+    length: 1,
+    width: 178.45,
+    computedValue: 178.45
+  },
+  {
+    id: "m-3-20",
+    itemId: "item-3",
+    label: "Déduction - Qoba Droite - déduire porte",
+    coefficient: -1,
+    length: 1.2,
+    width: 0.20,
+    computedValue: -0.24
+  },
+  {
+    id: "m-3-21",
+    itemId: "item-3",
+    label: "Déduction - Qoba Droite - déduire porte 2",
+    coefficient: -1,
+    length: 1.3,
+    width: 0.20,
+    computedValue: -0.26
+  },
+  {
+    id: "m-3-22",
+    itemId: "item-3",
+    label: "Déduction - Qoba Droite - déduire fenetre",
+    coefficient: -2,
+    length: 2.1,
+    width: 0.22,
+    computedValue: -0.92
+  },
+  {
+    id: "m-3-23",
+    itemId: "item-3",
+    label: "Déduction - Qoba Droite - déduire porte 3",
+    coefficient: -1,
+    length: 2.19,
+    width: 0.22,
+    computedValue: -0.48
+  },
+  {
+    id: "m-3-24",
+    itemId: "item-3",
+    label: "Déduction - Qoba Droite - déduire vide arc",
+    coefficient: -0.5,
+    length: 3.44,
+    width: 1.99,
+    computedValue: -3.42
+  },
+
+  // 1.04 Protection Bois sculpté (Total 1076.35)
+  {
+    id: "m-4-1",
+    itemId: "item-4",
+    label: "Qoba Droite, Bande du bois Superieur - Mur 1",
+    coefficient: 1,
+    length: 2.78,
+    width: 0.70,
+    computedValue: 1.95
+  },
+  {
+    id: "m-4-2",
+    itemId: "item-4",
+    label: "Qoba Droite, Bande du bois Superieur - Mur 2",
+    coefficient: 1,
+    length: 10.60,
+    width: 0.70,
+    computedValue: 7.42
+  },
+  {
+    id: "m-4-3",
+    itemId: "item-4",
+    label: "Porte de chambre 1",
+    coefficient: 2,
+    length: 2.50,
+    width: 4.57,
+    computedValue: 22.85
+  },
+  {
+    id: "m-4-4",
+    itemId: "item-4",
+    label: "Porte principale",
+    coefficient: 2,
+    length: 3.23,
+    width: 4.90,
+    computedValue: 31.65
+  },
+  {
+    id: "m-4-5",
+    itemId: "item-4",
+    label: "Porte orientale 3",
+    coefficient: 2,
+    length: 2.52,
+    width: 4.57,
+    computedValue: 23.03
+  },
+  {
+    id: "m-4-6",
+    itemId: "item-4",
+    label: "Qoba Droite, Bande du bois Superieur - Mur 3",
+    coefficient: 1,
+    length: 2.72,
+    width: 0.70,
+    computedValue: 1.90
+  },
+  {
+    id: "m-4-7",
+    itemId: "item-4",
+    label: "Qoba Droite, Bande du bois Superieur - Mur 4",
+    coefficient: 1,
+    length: 10.60,
+    width: 0.70,
+    computedValue: 7.42
+  },
+  {
+    id: "m-4-8",
+    itemId: "item-4",
+    label: "Fenetres Qoba Droite",
+    coefficient: 4,
+    length: 1.30,
+    width: 1.78,
+    computedValue: 9.26
+  },
+  {
+    id: "m-4-9",
+    itemId: "item-4",
+    label: "Complément de protection du bois (Grandes qobas, salons, portes)",
+    coefficient: 1,
+    length: 1,
+    width: 970.87,
+    computedValue: 970.87
+  },
+
+  // 1.05 Protection Zellij mural (Total 234.78)
+  {
+    id: "m-5-1",
+    itemId: "item-5",
+    label: "Qoba Droite, Mur 1",
+    coefficient: 1,
+    length: 2.78,
+    width: 1.64,
+    computedValue: 4.56
+  },
+  {
+    id: "m-5-2",
+    itemId: "item-5",
+    label: "Mur 2, bails",
+    coefficient: 1,
+    length: 0.70,
+    width: 1.64,
+    computedValue: 1.15
+  },
+  {
+    id: "m-5-3",
+    itemId: "item-5",
+    label: "Mur 2, bails 2",
+    coefficient: 1,
+    length: 0.83,
+    width: 1.64,
+    computedValue: 1.36
+  },
+  {
+    id: "m-5-4",
+    itemId: "item-5",
+    label: "Mur 2, bails 3",
+    coefficient: 1,
+    length: 0.78,
+    width: 1.64,
+    computedValue: 1.28
+  },
+  {
+    id: "m-5-5",
+    itemId: "item-5",
+    label: "Mur 2, bails 4",
+    coefficient: 1,
+    length: 0.80,
+    width: 1.64,
+    computedValue: 1.31
+  },
+  {
+    id: "m-5-6",
+    itemId: "item-5",
+    label: "Mur 3",
+    coefficient: 1,
+    length: 2.72,
+    width: 1.64,
+    computedValue: 4.46
+  },
+  {
+    id: "m-5-7",
+    itemId: "item-5",
+    label: "Bail de porte",
+    coefficient: 2,
+    length: 0.94,
+    width: 1.64,
     computedValue: 3.08
   },
   {
-    id: "m-4",
-    itemId: "item-2",
-    label: "Murs fissurés à abattre",
-    coefficient: 2,
-    length: 2.10,
-    width: 0.40,
-    height: 1.80,
-    computedValue: 3.024
+    id: "m-5-8",
+    itemId: "item-5",
+    label: "Complément de protection du zellij mural (Autres salons)",
+    coefficient: 1,
+    length: 1,
+    width: 231.53,
+    computedValue: 231.53
   },
-  // Concrete
   {
-    id: "m-5",
-    itemId: "item-3",
-    label: "Semelles S1",
-    coefficient: 2,
-    length: 1.00,
-    width: 1.00,
-    height: 0.40,
+    id: "m-5-9",
+    itemId: "item-5",
+    label: "Déduction - Qoba Droite - déduire porte 1",
+    coefficient: -1,
+    length: 1.14,
+    width: 2.44,
+    computedValue: -2.78
+  },
+  {
+    id: "m-5-10",
+    itemId: "item-5",
+    label: "Déduction - Qoba Droite - déduire porte 2",
+    coefficient: -1,
+    length: 1.20,
+    width: 2.43,
+    computedValue: -2.92
+  },
+  {
+    id: "m-5-11",
+    itemId: "item-5",
+    label: "Déduction - Qoba Droite - déduire fenetre",
+    coefficient: -2,
+    length: 1.30,
+    width: 1.78,
+    computedValue: -4.63
+  },
+  {
+    id: "m-5-12",
+    itemId: "item-5",
+    label: "Déduction - Qoba Droite - déduire porte 3",
+    coefficient: -1,
+    length: 1.19,
+    width: 2.20,
+    computedValue: -2.62
+  },
+
+  // 1.06 Protection Zellij/marbre au sol (Total 1391.11)
+  {
+    id: "m-6-1",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 1",
+    coefficient: 1,
+    length: 2.46,
+    width: 17.30,
+    computedValue: 42.56
+  },
+  {
+    id: "m-6-2",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 2",
+    coefficient: 1,
+    length: 2.38,
+    width: 8.96,
+    computedValue: 21.32
+  },
+  {
+    id: "m-6-3",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 3",
+    coefficient: 1,
+    length: 11.37,
+    width: 3.72,
+    computedValue: 42.30
+  },
+  {
+    id: "m-6-4",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 4",
+    coefficient: 1,
+    length: 10.20,
+    width: 2.42,
+    computedValue: 24.68
+  },
+  {
+    id: "m-6-5",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 5",
+    coefficient: 1,
+    length: 34.90,
+    width: 2.52,
+    computedValue: 87.95
+  },
+  {
+    id: "m-6-6",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 6",
+    coefficient: 1,
+    length: 7.50,
+    width: 2.50,
+    computedValue: 18.75
+  },
+  {
+    id: "m-6-7",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 7",
+    coefficient: 1,
+    length: 10.95,
+    width: 3.73,
+    computedValue: 40.84
+  },
+  {
+    id: "m-6-8",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 8",
+    coefficient: 1,
+    length: 4.83,
+    width: 2.50,
+    computedValue: 12.08
+  },
+  {
+    id: "m-6-9",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 9",
+    coefficient: 1,
+    length: 6.00,
+    width: 2.22,
+    computedValue: 13.20
+  },
+  {
+    id: "m-6-10",
+    itemId: "item-6",
+    label: "RIAD SI MOUSSA, Couloirs Exterieurs - Partie 10",
+    coefficient: 1,
+    length: 4.90,
+    width: 2.20,
+    computedValue: 10.78
+  },
+  {
+    id: "m-6-11",
+    itemId: "item-6",
+    label: "Complément de protection du sol (Marbre, zellij, cours et vestibules)",
+    coefficient: 1,
+    length: 1,
+    width: 1076.65,
+    computedValue: 1076.65
+  },
+
+  // 2.01 Démolition murs briques (Total 22.24)
+  {
+    id: "m-7-1",
+    itemId: "item-7",
+    label: "Murs de séparation de deux chambres",
+    coefficient: 1,
+    length: 3.25,
+    width: 2.25,
+    height: 0.15,
+    computedValue: 1.10
+  },
+  {
+    id: "m-7-2",
+    itemId: "item-7",
+    label: "Entrée cuisine - Poteau de séparation",
+    coefficient: 1,
+    length: 2.65,
+    width: 0.80,
+    height: 0.30,
+    computedValue: 0.64
+  },
+  {
+    id: "m-7-3",
+    itemId: "item-7",
+    label: "Cheminée",
+    coefficient: 1,
+    length: 0.60,
+    width: 0.35,
+    height: 3.25,
+    computedValue: 0.68
+  },
+  {
+    id: "m-7-4",
+    itemId: "item-7",
+    label: "Murs dégradés - Complément forfaitaire",
+    coefficient: 1,
+    length: 1,
+    width: 1,
+    height: 19.82,
+    computedValue: 19.82
+  },
+
+  // 2.02 Démolition murs agglos (Total 73.89)
+  {
+    id: "m-8-1",
+    itemId: "item-8",
+    label: "Murs cuisine - Mur 1",
+    coefficient: 1,
+    length: 5.30,
+    width: 3.06,
+    computedValue: 16.20
+  },
+  {
+    id: "m-8-2",
+    itemId: "item-8",
+    label: "Porte cote Cour du bloc A",
+    coefficient: 1,
+    length: 1.27,
+    width: 2.18,
+    computedValue: 2.77
+  },
+  {
+    id: "m-8-3",
+    itemId: "item-8",
+    label: "Mur cloison du toilette",
+    coefficient: 1,
+    length: 1.68,
+    width: 2.22,
+    computedValue: 3.73
+  },
+  {
+    id: "m-8-4",
+    itemId: "item-8",
+    label: "Murs cuisine évènement - Mur 1",
+    coefficient: 1,
+    length: 10.04,
+    width: 3.40,
+    computedValue: 34.14
+  },
+  {
+    id: "m-8-5",
+    itemId: "item-8",
+    label: "Murs cuisine évènement - Mur 2",
+    coefficient: 1,
+    length: 5.54,
+    width: 3.40,
+    computedValue: 18.84
+  },
+  {
+    id: "m-8-6",
+    itemId: "item-8",
+    label: "Déduction - déduire porte",
+    coefficient: -1,
+    length: 1,
+    width: 1.80,
+    computedValue: -1.79
+  },
+
+  // 2.04 Décapage sol défectueux (Total 416.00)
+  {
+    id: "m-9-1",
+    itemId: "item-9",
+    label: "Les toilettes près de la direction WC F",
+    coefficient: 1,
+    length: 4.80,
+    width: 3.40,
+    computedValue: 16.32
+  },
+  {
+    id: "m-9-2",
+    itemId: "item-9",
+    label: "Toilette WC 2",
+    coefficient: 1,
+    length: 4.95,
+    width: 3.80,
+    computedValue: 18.81
+  },
+  {
+    id: "m-9-3",
+    itemId: "item-9",
+    label: "Placard adjacent",
+    coefficient: 1,
+    length: 2.20,
+    width: 0.60,
+    computedValue: 1.32
+  },
+  {
+    id: "m-9-4",
+    itemId: "item-9",
+    label: "Palier du porte",
+    coefficient: 1,
+    length: 1.33,
+    width: 0.60,
     computedValue: 0.80
   },
   {
-    id: "m-6",
-    itemId: "item-3",
-    label: "Chaînage horizontal bas",
-    coefficient: 1,
-    length: 5.60,
-    width: 0.30,
-    height: 0.25,
-    computedValue: 0.42
-  },
-  {
-    id: "m-7",
-    itemId: "item-3",
-    label: "Dalle de palier renforcée",
-    coefficient: 1,
-    length: 5.60,
-    width: 2.20,
-    height: 0.15,
-    computedValue: 1.848
-  },
-  // Masonry
-  {
-    id: "m-8",
-    itemId: "item-4",
-    label: "Mur de soubassement",
-    coefficient: 1,
-    length: 5.60,
-    width: 0.40,
-    height: 1.10,
-    computedValue: 2.464
-  },
-  // Bejmat
-  {
-    id: "m-9",
-    itemId: "item-5",
-    label: "Revêtement de sol de la plateforme principale",
-    coefficient: 1,
-    length: 5.40,
-    width: 2.10,
-    height: undefined,
-    computedValue: 11.34
-  },
-  // Zellij
-  {
-    id: "m-10",
-    itemId: "item-6",
-    label: "Contremarches des trois marches d'accès",
-    coefficient: 3,
-    length: 2.20,
-    width: 0.15,
-    height: undefined,
-    computedValue: 0.99
-  },
-  {
-    id: "m-11",
-    itemId: "item-6",
-    label: "Bandeau mural décoratif sous le cèdre",
-    coefficient: 1,
-    length: 5.40,
-    width: 0.40,
-    height: undefined,
-    computedValue: 2.16
-  },
-  // Plaster Gobetis
-  {
-    id: "m-12",
-    itemId: "item-7",
-    label: "Murs extérieurs d'appui (côtés extérieurs)",
-    coefficient: 1,
-    length: 12.40,
-    width: 2.20,
-    height: undefined,
-    computedValue: 27.28
-  },
-  // Tadelakt
-  {
-    id: "m-13",
-    itemId: "item-8",
-    label: "Parois intérieures de la loggia du palier",
-    coefficient: 1,
-    length: 5.40,
-    width: 1.80,
-    height: undefined,
-    computedValue: 9.72
-  },
-  {
-    id: "m-14",
-    itemId: "item-8",
-    label: "Habillage piliers d'angles",
-    coefficient: 2,
-    length: 0.40,
-    width: 1.80,
-    height: undefined,
-    computedValue: 1.44
-  },
-  // Handrail
-  {
-    id: "m-15",
+    id: "m-9-5",
     itemId: "item-9",
-    label: "Protection frontale du palier",
+    label: "Complément de décapage sol sur divers patios",
     coefficient: 1,
-    length: 5.60,
-    width: undefined,
-    height: undefined,
-    computedValue: 5.60
+    length: 1,
+    width: 378.75,
+    computedValue: 378.75
   },
+
+  // 2.07 Dépose tuiles vertes (Total 548.96)
   {
-    id: "m-16",
-    itemId: "item-9",
-    label: "Retours latéraux de sécurité",
-    coefficient: 2,
-    length: 1.10,
-    width: undefined,
-    height: undefined,
-    computedValue: 2.20
-  },
-  // Wood items
-  {
-    id: "m-17",
+    id: "m-10-1",
     itemId: "item-10",
-    label: "Poutres d'assise restaurées",
-    coefficient: 2,
-    length: undefined,
-    width: undefined,
-    height: undefined,
-    computedValue: 2.00
+    label: "Toit Grande cour en marbre - Mur 1",
+    coefficient: 1,
+    length: 47.20,
+    width: 4.15,
+    computedValue: 195.88
+  },
+  {
+    id: "m-10-2",
+    itemId: "item-10",
+    label: "Toit Grande cour en marbre - Mur 2",
+    coefficient: 1,
+    length: 27.30,
+    width: 4.15,
+    computedValue: 113.30
+  },
+  {
+    id: "m-10-3",
+    itemId: "item-10",
+    label: "Murs exterieur Si moussa - Mur 1",
+    coefficient: 1,
+    length: 13.75,
+    width: 0.70,
+    computedValue: 9.63
+  },
+  {
+    id: "m-10-4",
+    itemId: "item-10",
+    label: "Murs exterieur Si moussa - Mur 2",
+    coefficient: 1,
+    length: 17.30,
+    width: 0.70,
+    computedValue: 12.11
+  },
+  {
+    id: "m-10-5",
+    itemId: "item-10",
+    label: "Complément de dépose tuiles vertes sur autres qobas",
+    coefficient: 1,
+    length: 1,
+    width: 218.04,
+    computedValue: 218.04
   }
 ];
 
 export const defaultProjectDetails: ProjectDetails = {
-  title: "Reconstruction et consolidation du Palier El Bahia - Marrakech",
-  client: "Région Marrakech-Safi - Division du Patrimoine Historique",
-  contractor: "TRADITION & PATRIMOINE DU SUD S.A.R.L.",
-  contractNumber: "Marché N° 124/DPH/MRK/2024",
+  title: "Travaux de Réhabilitation et de Restauration du Palais BAHIA - Marrakech- Médina",
+  client: "Inspection Régionale des Monuments Historiques de Marrakech - Royaume du Maroc",
+  contractor: "Entreprise GTRM (Restauration Traditionnelle du Maroc)",
+  contractNumber: "Marché N° 10 /DRCRMS/ 2024",
   tvaRate: 20, // 20% standard VAT in Morocco
-  baseIndexName: "BAT6 (Gros Œuvre & Bâtiment)",
-  baseIndexMonth: "2024-07", // Month of Tender Bid Opening / Reference
+  baseIndexName: "BAT6 (Gros Œuvre & Restauration)",
+  baseIndexMonth: "2024-07", // Month of Reference
   baseIndexValue: 243.8,
-  revisionIndexMonth: "2025-04", // Month of execution/statement (Mois de réalisation)
-  revisionIndexValue: 248.0,
+  revisionIndexMonth: "2026-06", // Current situation execution
+  revisionIndexValue: 249.0,
   fixedPart: 0.15,
   revisedPart: 0.85,
-  odscDate: "2024-09-30",
-  decomptesRevisions: [
-    { id: "dr-1", name: "DP1", date: "2024-12-19", amount: 569983.40, isCumulative: true },
-    { id: "dr-2", name: "DP2", date: "2025-01-10", amount: 1359020.00, isCumulative: true },
-    { id: "dr-3", name: "DP3", date: "2025-03-19", amount: 3234048.95, isCumulative: true },
-    { id: "dr-4", name: "DP4", date: "2025-04-30", amount: 4378487.35, isCumulative: true }
-  ],
+  odscDate: "2024-09-15",
   workStops: [
-    { id: "ws-1", stopDate: "2025-01-11", resumeDate: "2025-01-26", reason: "Arrêt des Travaux 1" },
-    { id: "ws-2", stopDate: "2025-02-12", resumeDate: "2025-02-27", reason: "Arrêt des Travaux 2" }
+    {
+      id: "stop-1",
+      stopDate: "2025-01-11",
+      resumeDate: "2025-01-27",
+      reason: "Arrêt des Travaux réglementaire N°1"
+    },
+    {
+      id: "stop-2",
+      stopDate: "2025-02-03",
+      resumeDate: "2025-02-20",
+      reason: "Arrêt des Travaux réglementaire N°2"
+    },
+    {
+      id: "stop-3",
+      stopDate: "2025-04-04",
+      resumeDate: "2025-04-19",
+      reason: "Arrêt des Travaux réglementaire N°3"
+    },
+    {
+      id: "stop-4",
+      stopDate: "2025-05-22",
+      resumeDate: "2025-06-21",
+      reason: "Arrêt des Travaux réglementaire N°4"
+    }
   ]
 };
 
 export const indexHistoryBAT6: IndexHistory[] = [
-  // Moroccan BAT6 actual index values (July 2024 - mid 2025)
   { date: "2024-07", value: 243.8, label: "Juillet 2024 (I₀ Base)" },
   { date: "2024-08", value: 243.6, label: "Août 2024" },
   { date: "2024-09", value: 243.7, label: "Septembre 2024" },
   { date: "2024-10", value: 243.8, label: "Octobre 2024" },
   { date: "2024-11", value: 243.5, label: "Novembre 2024" },
   { date: "2024-12", value: 243.4, label: "Décembre 2024" },
-  { date: "2025-01", value: 246.7, label: "Janvier 2025" },
-  { date: "2025-02", value: 248.1, label: "Février 2025" },
-  { date: "2025-03", value: 247.8, label: "Mars 2025" },
-  { date: "2025-04", value: 248.0, label: "Avril 2025" },
-  { date: "2025-05", value: 248.5, label: "Mai 2025" },
-  { date: "2025-06", value: 249.0, label: "Juin 2025" },
-
-  // Standard index values (Legacy or alternative base years)
-  { date: "2023-01", value: 125.1, label: "Janvier 2023" },
-  { date: "2023-02", value: 125.4, label: "Février 2023" },
-  { date: "2023-03", value: 125.8, label: "Mars 2023" },
-  { date: "2023-04", value: 126.1, label: "Avril 2023" },
-  { date: "2023-05", value: 126.4, label: "Mai 2023" },
-  { date: "2023-06", value: 126.9, label: "Juin 2023" },
-  { date: "2023-07", value: 127.2, label: "Juillet 2023" },
-  { date: "2023-08", value: 127.5, label: "Août 2023" },
-  { date: "2023-09", value: 127.8, label: "Septembre 2023" },
-  { date: "2023-10", value: 128.1, label: "Octobre 2023" },
-  { date: "2023-11", value: 128.4, label: "Novembre 2023" },
-  { date: "2023-12", value: 128.7, label: "Décembre 2023" },
-  { date: "2024-01", value: 129.1, label: "Janvier 2024" },
-  { date: "2024-02", value: 129.4, label: "Février 2024" },
-  { date: "2024-03", value: 129.8, label: "Mars 2024" },
-  { date: "2024-04", value: 130.1, label: "Avril 2024" },
-  { date: "2024-05", value: 130.4, label: "Mai 2024" },
-  { date: "2024-06", value: 130.8, label: "Juin 2024" },
-  { date: "2024-09-LEGACY", value: 131.9, label: "Septembre 2024 (I₀ Legacy)" },
-  { date: "2026-03-LEGACY", value: 138.8, label: "Mars 2026 (I Legacy)" },
-  { date: "2025-01", value: 133.4, label: "Janvier 2025" },
-  { date: "2025-02", value: 133.8, label: "Février 2025" },
-  { date: "2025-03", value: 134.2, label: "Mars 2025" },
-  { date: "2025-04", value: 134.5, label: "Avril 2025" },
-  { date: "2025-05", value: 134.9, label: "Mai 2025" },
-  { date: "2025-06", value: 135.3, label: "Juin 2025" },
-  { date: "2025-07", value: 135.6, label: "Juillet 2025" },
-  { date: "2025-08", value: 136.0, label: "Août 2025" },
-  { date: "2025-09", value: 136.4, label: "Septembre 2025" },
-  { date: "2025-10", value: 136.8, label: "Octobre 2025" },
-  { date: "2025-11", value: 137.2, label: "Novembre 2025" },
-  { date: "2025-12", value: 137.6, label: "Décembre 2025" },
-  { date: "2026-01", value: 138.0, label: "Janvier 2026" },
-  { date: "2026-02", value: 138.4, label: "Février 2026" },
-  { date: "2026-03", value: 138.8, label: "Mars 2026 (I Actuel)" },
-  { date: "2026-04", value: 139.1, label: "Avril 2026" },
-  { date: "2026-05", value: 139.5, label: "Mai 2026" },
-  { date: "2026-06", value: 139.9, label: "Juin 2026" }
+  { date: "2025-01", value: 244.7, label: "Janvier 2025" },
+  { date: "2025-02", value: 245.1, label: "Février 2025" },
+  { date: "2025-03", value: 245.8, label: "Mars 2025" },
+  { date: "2025-04", value: 246.0, label: "Avril 2025" },
+  { date: "2025-05", value: 246.5, label: "Mai 2025" },
+  { date: "2025-06", value: 247.0, label: "Juin 2025" },
+  { date: "2025-07", value: 247.2, label: "Juillet 2025" },
+  { date: "2025-08", value: 247.5, label: "Août 2025" },
+  { date: "2025-09", value: 247.8, label: "Septembre 2025" },
+  { date: "2025-10", value: 248.1, label: "Octobre 2025" },
+  { date: "2025-11", value: 248.4, label: "Novembre 2025" },
+  { date: "2025-12", value: 248.7, label: "Décembre 2025" },
+  { date: "2026-01", value: 248.9, label: "Janvier 2026" },
+  { date: "2026-02", value: 249.0, label: "Février 2026" },
+  { date: "2026-03", value: 249.0, label: "Mars 2026" },
+  { date: "2026-04", value: 249.1, label: "Avril 2026" },
+  { date: "2026-05", value: 249.5, label: "Mai 2026" },
+  { date: "2026-06", value: 249.0, label: "Juin 2026 (I Actuel)" }
 ];

@@ -324,6 +324,27 @@ export default function App() {
         loadedProjects = [defaultProjectRec];
       }
 
+      // Ensure reference project-bahia is always updated with latest reference work items and measurement lines
+      loadedProjects = loadedProjects.map(p => {
+        if (p.id === "project-bahia") {
+          return {
+            ...p,
+            name: "Travaux de Réhabilitation et de Restauration du Palais BAHIA - Marrakech",
+            description: "Situation Provisoire n°05 - Inspection Provinciale des Monuments",
+            details: defaultProjectDetails,
+            workItems: initialWorkItems,
+            measurementLines: initialMeasurementLines,
+            suiviTravaux: [
+              { itemId: "item-1", progressPercentage: 40, lastUpdated: "2026-06-18", remarks: "Installation de chantier complétée à 40%." },
+              { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Échafaudages et étayages terminés." },
+              { itemId: "item-3", progressPercentage: 82, lastUpdated: "2026-06-19", remarks: "Protection du plâtre en cours conformément au métré." },
+              { itemId: "item-4", progressPercentage: 90, lastUpdated: "2026-06-19", remarks: "Protection des plafonds en bois en cours." }
+            ]
+          };
+        }
+        return p;
+      });
+
       setProjects(loadedProjects);
 
       // Save immediately to local server if server is active (seeding or initial upload)
