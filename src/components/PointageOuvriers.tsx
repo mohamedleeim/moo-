@@ -119,7 +119,7 @@ export default function PointageOuvriers({
   };
 
   // Update status or wage advance inside active date check-in
-  const updateActiveDayStatus = (workerId: string, status: "present" | "demi-journee" | "absent" | "conge") => {
+  const updateActiveDayStatus = (workerId: string, status: "present" | "demi-journee" | "absent" | "conge" | "double-journee") => {
     const hasRecord = activeDayPointage.pointages.some(p => p.workerId === workerId);
     let updatedPoints: WorkDayPointage[];
 
@@ -177,6 +177,7 @@ export default function PointageOuvriers({
   const getWorkerRecap = (worker: Worker) => {
     let daysPresent = 0;
     let daysDemi = 0;
+    let daysDouble = 0;
     let daysAbsent = 0;
     let daysConge = 0;
     let wagesEarned = 0;
@@ -191,6 +192,9 @@ export default function PointageOuvriers({
         } else if (pt.status === "demi-journee") {
           daysDemi++;
           wagesEarned += (worker.dailyRate / 2);
+        } else if (pt.status === "double-journee") {
+          daysDouble++;
+          wagesEarned += (worker.dailyRate * 2);
         } else if (pt.status === "absent") {
           daysAbsent++;
         } else if (pt.status === "conge") {
@@ -204,13 +208,16 @@ export default function PointageOuvriers({
       }
     });
 
+    const totalDaysEquivalent = daysPresent + (daysDemi * 0.5) + (daysDouble * 2) + daysConge;
     const netToPay = wagesEarned - advancesReceived;
 
     return {
       daysPresent,
       daysDemi,
+      daysDouble,
       daysAbsent,
       daysConge,
+      totalDaysEquivalent,
       wagesEarned,
       advancesReceived,
       netToPay
@@ -436,14 +443,19 @@ export default function PointageOuvriers({
           </div>
 
           {/* Quick instructions indicator details banner */}
-          <div className="bg-stone-50 border border-stone-200/50 rounded-xl p-3 text-stone-500 text-[10.5px] leading-relaxed flex gap-2 select-none">
+          <div className="bg-stone-50 border border-stone-200/50 rounded-xl p-3 text-stone-550 text-[10.5px] leading-relaxed flex gap-2 select-none">
             <AlertCircle className="h-4.5 w-4.5 text-brand-gold shrink-0 mt-0.5" />
-            <p>
-              Toute modification est enregistrée à la volée. 
-              <strong> Présent</strong> attribue le tarif plein (1x). 
-              <strong> Demi-journée</strong> attribue la moitié (0.5x). 
-              <strong> Absent</strong> attribue 0. Les acomptes saisis s'ajoutent aux avances cumulées.
-            </p>
+            <div>
+              <p className="font-bold text-stone-850">ℹ️ تعليمات الاستخدام (Instructions) :</p>
+              <p className="mt-0.5">
+                تُحفظ التعديلات تلقائياً. 
+                <span className="font-bold text-emerald-600"> الحاضر (P)</span> يمنح يوم عمل كامل (1x). 
+                <span className="font-bold text-amber-600"> نصف يوم (1/2)</span> يمنح نصف يوم عمل (0.5x). 
+                <span className="font-bold text-indigo-600"> يومين (2)</span> يمنح يومين عمل كاملين (2x). 
+                <span className="font-bold text-rose-600"> غائب (A)</span> يمنح 0 أيام. 
+                أما التسبيقات المدخلة بجانب كل عامل فتخصم مباشرة عند حساب الأجر الكلي المتبقي.
+              </p>
+            </div>
           </div>
 
           {/* Worksheet Check-in Grid roster list */}
@@ -457,10 +469,27 @@ export default function PointageOuvriers({
               };
 
               return (
-                <div key={w.id} className="py-3 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                  <div className="space-y-0.5">
+                <div key={w.id} className="py-3 flex flex-col md:flex-row justify-between md:items-center gap-3">
+                  <div className="space-y-1">
                     <strong className="text-stone-850 font-bold block">{w.name}</strong>
-                    <span className="text-[10.5px] text-stone-400 block leading-none">{w.role} • <strong>{w.dailyRate} MAD/j</strong></span>
+                    
+                    {/* Inline Rate and Role Editor */}
+                    <div className="flex items-center gap-1 text-[10px] text-stone-500">
+                      <span>{w.role} • الأجر اليومي:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="ثمن اليوم"
+                        value={w.dailyRate || ""}
+                        onChange={e => {
+                          const val = parseFloat(e.target.value) || 0;
+                          const updated = workers.map(wrk => wrk.id === w.id ? { ...wrk, dailyRate: val } : wrk);
+                          onUpdateWorkers(updated);
+                        }}
+                        className="w-16 px-1.5 py-0.5 bg-stone-50 border border-stone-250 rounded font-mono font-bold text-stone-800 text-center focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                      />
+                      <span>درهم/يوم</span>
+                    </div>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4">
@@ -468,45 +497,61 @@ export default function PointageOuvriers({
                     <div className="flex bg-stone-100 p-0.5 rounded-lg border border-stone-200">
                       <button
                         onClick={() => updateActiveDayStatus(w.id, "present")}
-                        className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-md transition ${
+                        className={`px-2 py-1 text-[9.5px] font-bold rounded-md transition ${
                           ptItem.status === "present"
                             ? "bg-emerald-500 text-white shadow-xs"
                             : "text-stone-600 hover:text-stone-900"
                         }`}
+                        title="Présent (1 jour)"
                       >
-                        الحاضر (P)
+                        حاضر (1)
                       </button>
                       <button
                         onClick={() => updateActiveDayStatus(w.id, "demi-journee")}
-                        className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-md transition ${
+                        className={`px-2 py-1 text-[9.5px] font-bold rounded-md transition ${
                           ptItem.status === "demi-journee"
                             ? "bg-amber-500 text-stone-950 shadow-xs"
                             : "text-stone-600 hover:text-stone-900"
                         }`}
+                        title="Demi-journée (0.5 jour)"
                       >
-                        نصف يوم (1/2)
+                        نصف يوم (0.5)
+                      </button>
+                      <button
+                        onClick={() => updateActiveDayStatus(w.id, "double-journee")}
+                        className={`px-2 py-1 text-[9.5px] font-bold rounded-md transition ${
+                          ptItem.status === "double-journee"
+                            ? "bg-indigo-600 text-white shadow-xs"
+                            : "text-stone-600 hover:text-stone-900"
+                        }`}
+                        title="Double journée (2 jours)"
+                      >
+                        يومين (2)
                       </button>
                       <button
                         onClick={() => updateActiveDayStatus(w.id, "absent")}
-                        className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-md transition ${
+                        className={`px-2 py-1 text-[9.5px] font-bold rounded-md transition ${
                           ptItem.status === "absent"
                             ? "bg-rose-500 text-white shadow-xs"
                             : "text-stone-600 hover:text-stone-900"
                         }`}
+                        title="Absent (0)"
                       >
                         غائب (A)
                       </button>
                     </div>
 
-                    {/* Advance paid input during day */}
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-stone-400 font-bold uppercase">Acompte (MAD)</span>
+                    {/* Advance paid input during day with editing */}
+                    <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-150 p-1 rounded-lg">
+                      <span className="text-[9px] text-stone-500 font-extrabold uppercase">💰 تسبيق اليوم (MAD)</span>
                       <input
                         type="number"
+                        min="0"
                         placeholder="0"
                         value={ptItem.advancePaid || ""}
                         onChange={e => updateActiveDayAdvance(w.id, e.target.value)}
-                        className="w-16 p-1 bg-stone-50 hover:bg-stone-100 font-mono text-center font-bold text-[11px] border border-stone-250 rounded-lg focus:outline-none"
+                        className="w-16 p-1 bg-white font-mono text-center font-bold text-[11px] border border-stone-250 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-gold"
+                        title="Acompte / avance payée ce jour"
                       />
                     </div>
                   </div>
@@ -516,7 +561,7 @@ export default function PointageOuvriers({
 
             {workers.length === 0 && (
               <div className="py-8 text-center text-stone-400 italic">
-                Roster vide. Enrôlez des vôtres dans l'onglet de gauche pour dresser le premier appel.
+                La liste des ouvriers est vide. Veuillez d'abord ajouter des ouvriers dans l'onglet à gauche.
               </div>
             )}
           </div>
@@ -525,20 +570,26 @@ export default function PointageOuvriers({
       </div>
 
       {/* Recapitulative Financial Wages Roster Situation (Situation de chaque ouvrier) */}
-      <div className="bg-white border border-stone-250 rounded-2xl overflow-hidden shadow-xs space-y-4">
+      <div className="bg-white border border-stone-250 rounded-2xl overflow-hidden shadow-xs space-y-4 font-sans">
         
         {/* Rec recap head */}
-        <div className="bg-stone-50 border-b border-stone-200 px-5 py-3 flex items-center justify-between">
+        <div className="bg-stone-50 border-b border-stone-200 px-5 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h4 className="font-sans font-extrabold text-stone-900 text-xs uppercase tracking-wider">Situation Individuelle de Chants & Salaires (Payroll Status)</h4>
-            <p className="text-stone-500 text-[10px]">État de compte consolidé de chaque compagnon face au cumul des pointages et avances.</p>
+            <h4 className="font-sans font-black text-stone-900 text-sm flex items-center gap-1.5 direction-rtl">
+              <span>📊 كشف حساب الأجور والتعويضات الفردية للعمال</span>
+              <span className="text-xs text-stone-400 font-normal select-none">| Situation de Main d'œuvre</span>
+            </h4>
+            <p className="text-stone-500 text-[10.5px] mt-1">
+              الاحتساب الآلي يعتمد على المعادلة التالية: <strong className="text-stone-700">الأجر المستحق = (عدد الأيام المكافئة × أجرة اليوم) - مجموع التسبيقات</strong>.
+            </p>
           </div>
           
           <button
             onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-stone-250 hover:border-stone-450 hover:bg-stone-50 text-stone-700 font-extrabold rounded-lg text-xs transition"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white border border-stone-250 hover:border-stone-450 hover:bg-stone-50 text-stone-700 font-extrabold rounded-lg text-xs transition select-none"
           >
-            <Printer className="h-4 w-4" /> Imprimer Situation
+            <Printer className="h-4 w-4 text-brand-gold" />
+            <span>طباعة الجدول (Imprimer)</span>
           </button>
         </div>
 
@@ -546,15 +597,17 @@ export default function PointageOuvriers({
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left text-stone-600 border-collapse">
             <thead>
-              <tr className="bg-stone-50 border-b border-stone-200 text-stone-500 font-bold uppercase text-[9px] text-center select-none">
-                <th className="px-5 py-3 text-left">Nom Complet</th>
-                <th className="px-4 py-3 text-left">Poste de Compagnon</th>
-                <th className="px-4 py-3">Plafonnement Tarif</th>
-                <th className="px-4 py-3">Jours Présent (P)</th>
-                <th className="px-4 py-3">Demi-Jours (1/2 J)</th>
-                <th className="px-4 py-3 text-right text-stone-900">Salaire Cumulé Brut</th>
-                <th className="px-4 py-3 text-right text-amber-700">Acomptes Perçus</th>
-                <th className="px-4 py-3 text-right text-brand-brown font-black">Reste Net à Payer</th>
+              <tr className="bg-stone-50/75 border-b border-stone-200 text-stone-550 font-bold uppercase text-[9.5px] text-center select-none">
+                <th className="px-4 py-3.5 text-left font-extrabold">الاسم الكامل (Nom)</th>
+                <th className="px-4 py-3.5 text-left font-extrabold">الحرفة (Poste)</th>
+                <th className="px-4 py-3.5 font-extrabold">أجرة اليوم (Tarif/j)</th>
+                <th className="px-3 py-3.5 font-extrabold text-emerald-700 bg-emerald-500/[0.01]">حاضر (1ج)</th>
+                <th className="px-3 py-3.5 font-extrabold text-amber-700 bg-amber-500/[0.01]">نصف يوم (0.5ج)</th>
+                <th className="px-3 py-3.5 font-extrabold text-indigo-700 bg-indigo-500/[0.01]">يومين (2ج)</th>
+                <th className="px-4 py-3.5 font-extrabold text-stone-700 bg-stone-100/50">إجمالي الأيام</th>
+                <th className="px-4 py-3.5 text-right font-extrabold text-stone-900">مجموع الأجر الإجمالي</th>
+                <th className="px-4 py-3.5 text-right font-extrabold text-rose-700">مجموع التسبيقات</th>
+                <th className="px-5 py-3.5 text-right font-extrabold text-brand-brown bg-brand-clay/5">الصافي المتبقي</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-150">
@@ -562,31 +615,56 @@ export default function PointageOuvriers({
                 const recap = getWorkerRecap(w);
                 return (
                   <tr key={w.id} className="hover:bg-stone-50/25 transition">
-                    <td className="px-5 py-3 font-bold text-stone-900 border-r border-stone-100">
+                    <td className="px-4 py-3 font-bold text-stone-900 border-r border-stone-100">
                       {w.name}
                     </td>
-                    <td className="px-4 py-3 capitalize font-semibold text-stone-500">
+                    <td className="px-4 py-3 capitalize font-semibold text-stone-400">
                       {w.role}
                     </td>
-                    <td className="px-4 py-3 font-mono text-center font-bold text-stone-700">
-                      {w.dailyRate} MAD
+                    <td className="px-4 py-3 font-mono text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <input
+                          type="number"
+                          min="0"
+                          value={w.dailyRate || ""}
+                          onChange={e => {
+                            const val = parseFloat(e.target.value) || 0;
+                            const updated = workers.map(wrk => wrk.id === w.id ? { ...wrk, dailyRate: val } : wrk);
+                            onUpdateWorkers(updated);
+                          }}
+                          className="w-16 px-1.5 py-0.5 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded font-mono font-bold text-stone-800 text-center focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                        />
+                        <span className="text-[9px] text-stone-400 font-bold">DH</span>
+                      </div>
                     </td>
-                    <td className="px-4 py-3 font-semibold text-center text-emerald-700 bg-emerald-500/[0.02]">
+                    <td className="px-3 py-3 font-semibold text-center text-emerald-700 bg-emerald-500/[0.01]">
                       <span className="inline-flex items-center gap-0.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {recap.daysPresent} j
+                        <CheckCircle2 className="h-3 w-3 text-emerald-500" /> {recap.daysPresent} يوم
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-semibold text-center text-amber-700 bg-amber-500/[0.02]">
-                      {recap.daysDemi} j
+                    <td className="px-3 py-3 font-semibold text-center text-amber-700 bg-amber-500/[0.01]">
+                      {recap.daysDemi} نصف
+                    </td>
+                    <td className="px-3 py-3 font-semibold text-center text-indigo-700 bg-indigo-500/[0.01]">
+                      {recap.daysDouble} ج.مضاعف
+                    </td>
+                    <td className="px-4 py-3 font-mono font-bold text-center text-stone-850 bg-stone-100/30">
+                      {recap.totalDaysEquivalent} يوم
                     </td>
                     <td className="px-4 py-3 font-mono font-black text-stone-900 text-right">
                       {formatMAD(recap.wagesEarned)}
                     </td>
-                    <td className="px-4 py-3 font-mono font-black text-amber-655 text-right bg-amber-500/[0.01]">
+                    <td className="px-4 py-3 font-mono font-black text-rose-700 text-right bg-rose-500/[0.01]">
                       {formatMAD(recap.advancesReceived)}
                     </td>
-                    <td className={`px-4 py-3 font-mono font-black text-right border-l border-stone-100 text-xs ${recap.netToPay > 0 ? "text-brand-brown bg-brand-clay/10" : "text-stone-400"}`}>
-                      {formatMAD(recap.netToPay)}
+                    <td className={`px-5 py-3 font-mono font-black text-right border-l border-stone-150 text-xs ${recap.netToPay > 0 ? "text-brand-brown bg-brand-clay/15" : "text-emerald-700 bg-emerald-50"}`}>
+                      {recap.netToPay < 0 ? (
+                        <span title="Trop perçu par l'ouvrier" className="text-red-650">
+                          {formatMAD(recap.netToPay)}
+                        </span>
+                      ) : (
+                        formatMAD(recap.netToPay)
+                      )}
                     </td>
                   </tr>
                 );
@@ -594,8 +672,8 @@ export default function PointageOuvriers({
 
               {workers.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-stone-400 italic font-light text-xs">
-                    Aucun ouvrier enregistré pour la paie.
+                  <td colSpan={10} className="py-8 text-center text-stone-400 italic font-light text-xs">
+                    لم يتم تسجيل أي عامل في جدول الحسابات لتفصيل الأجور.
                   </td>
                 </tr>
               )}
@@ -603,8 +681,19 @@ export default function PointageOuvriers({
           </table>
         </div>
 
+        {/* Informational math formula footer card info */}
+        <div className="p-4 bg-stone-50 border-t border-stone-150 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-[10px] text-stone-400 select-none">
+          <div className="flex items-center gap-1.5">
+            <Coins className="h-4 w-4 text-brand-gold shrink-0" />
+            <p>
+              <strong>طريقة الاحتساب:</strong> مجموع الأيام المعادلة = (حاضر {`×`} 1) + (نصف يوم {`×`} 0.5) + (يومين {`×`} 2) + أيام غياب مرخص.
+            </p>
+          </div>
+          <p className="font-mono bg-white px-2 py-1 border border-stone-200 rounded font-medium text-[9.5px]">
+            Wages formula: (Days * Rate) - Advancies = Balance
+          </p>
+        </div>
       </div>
-
     </div>
   );
 }

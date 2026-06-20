@@ -124,7 +124,7 @@ export interface Worker {
 
 export interface WorkDayPointage {
   workerId: string;
-  status: 'present' | 'demi-journee' | 'absent' | 'conge';
+  status: 'present' | 'demi-journee' | 'absent' | 'conge' | 'double-journee';
   advancePaid?: number; // Advance payments on salary (avances)
   remarks?: string;
 }
