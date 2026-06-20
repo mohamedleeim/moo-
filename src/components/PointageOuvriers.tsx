@@ -807,7 +807,14 @@ export default function PointageOuvriers({
 
       {/* ==================== PRINT PREVIEW MODAL & LEDGER SYSTEM ==================== */}
       {printTarget && (
-        <div className="fixed inset-0 bg-stone-900/75 backdrop-blur-xs flex items-start justify-center z-50 p-4 md:p-8 overflow-y-auto print:p-0 print:bg-white print:absolute print:inset-0">
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setPrintTarget(null);
+            }
+          }}
+          className="fixed inset-0 bg-stone-900/80 backdrop-blur-xs flex items-start justify-center z-50 p-4 md:p-8 overflow-y-auto print:p-0 print:bg-white print:absolute print:inset-0 cursor-pointer"
+        >
           
           {/* Inject Dynamic Print Overrides to only show our target area */}
           <style dangerouslySetInnerHTML={{ __html: `
@@ -831,10 +838,20 @@ export default function PointageOuvriers({
             }
           `}} />
 
-          <div id="printable-area" className="bg-white border border-stone-350 rounded-2xl w-full max-w-4xl p-6 md:p-8 shadow-2xl relative flex flex-col gap-6 print:shadow-none print:border-none print:rounded-none my-4">
+          {/* Floating Close Button in Viewport (Hidden in Print) */}
+          <button
+            onClick={() => setPrintTarget(null)}
+            className="fixed top-4 right-4 z-55 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full shadow-2xl transition cursor-pointer print:hidden flex items-center justify-center gap-1.5 font-bold text-xs border border-rose-500 hover:scale-105 active:scale-95"
+            title="إغلاق المعاينة (Fermer) ✕"
+          >
+            <X className="h-4.5 w-4.5" />
+            <span>إغلاق (Fermer) ✕</span>
+          </button>
+
+          <div id="printable-area" className="bg-white border border-stone-350 rounded-2xl w-full max-w-4xl p-6 md:p-8 shadow-2xl relative flex flex-col gap-6 print:shadow-none print:border-none print:rounded-none my-4 cursor-default">
             
             {/* Modal Actions Header (Hidden in Print) */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 pb-4 gap-3 print:hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 pb-4 gap-3 print:hidden select-none">
               <div className="flex items-center gap-2">
                 <Printer className="h-5 w-5 text-brand-gold shrink-0" />
                 <div>
@@ -853,7 +870,7 @@ export default function PointageOuvriers({
               <div className="flex items-center gap-2 self-end sm:self-auto">
                 <button
                   onClick={() => window.print()}
-                  className="px-4 py-2 bg-brand-gold hover:bg-brand-gold/90 text-stone-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  className="px-4 py-2 bg-brand-gold hover:bg-brand-gold/90 text-stone-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer hover:scale-103 active:scale-97"
                 >
                   <Printer className="h-4 w-4" />
                   <span>بدء الطباعة الآن (Imprimer)</span>
@@ -867,6 +884,18 @@ export default function PointageOuvriers({
                   <span>إغلاق (Fermer)</span>
                 </button>
               </div>
+            </div>
+
+            {/* Print advice warning card explaining how to handle standard Iframe constraints in Chrome */}
+            <div className="bg-amber-500/10 border border-brand-gold/30 p-3.5 rounded-xl text-stone-700 space-y-1.5 print:hidden select-text text-xs">
+              <p className="font-extrabold text-brand-brown flex items-center gap-1.5">
+                <AlertCircle className="h-4 w-4 text-brand-gold" />
+                <span>💡 تنبيه هام لعملية الطباعة من داخل محرر الأكواد:</span>
+              </p>
+              <p className="leading-relaxed text-[11px] text-stone-600 pr-5">
+                نظراً لقيود الحماية والأجهزة الافتراضية داخل إطارات العرض المعزولة (Iframe) لخدمات برمجة المعاينة، قد يتم منع فتح نافذة الطابعة تلقائياً. 
+                يرجى **فتح اللعبة في نافذة حرة مستقلة (Open in New Tab)** بالضغط على سهم الخروج الصغير أعلى يمين الشاشة، ثم اضغط على زر المعاينة والطباعة لتتحصل على كشف الحساب والوضعية بنسخة ورقية جاهزة للتوقيع والتسريح.
+              </p>
             </div>
 
             {/* Document Body */}
