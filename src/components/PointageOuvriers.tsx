@@ -807,7 +807,7 @@ export default function PointageOuvriers({
 
       {/* ==================== PRINT PREVIEW MODAL & LEDGER SYSTEM ==================== */}
       {printTarget && (
-        <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto select-none print:p-0 print:bg-white print:absolute print:inset-0">
+        <div className="fixed inset-0 bg-stone-900/75 backdrop-blur-xs flex items-start justify-center z-50 p-4 md:p-8 overflow-y-auto print:p-0 print:bg-white print:absolute print:inset-0">
           
           {/* Inject Dynamic Print Overrides to only show our target area */}
           <style dangerouslySetInnerHTML={{ __html: `
@@ -831,34 +831,40 @@ export default function PointageOuvriers({
             }
           `}} />
 
-          <div id="printable-area" className="bg-white border border-stone-300 rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative flex flex-col gap-6 print:shadow-none print:border-none print:rounded-none">
+          <div id="printable-area" className="bg-white border border-stone-350 rounded-2xl w-full max-w-4xl p-6 md:p-8 shadow-2xl relative flex flex-col gap-6 print:shadow-none print:border-none print:rounded-none my-4">
             
             {/* Modal Actions Header (Hidden in Print) */}
-            <div className="flex items-center justify-between border-b border-stone-200 pb-4 select-none print:hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 pb-4 gap-3 print:hidden">
               <div className="flex items-center gap-2">
-                <Printer className="h-5 w-5 text-brand-gold" />
-                <h3 className="font-black text-stone-900 text-sm">
-                  {printTarget.type === 'all' 
-                    ? "معاينة الطباعة لكشف الحساب العام للأجور" 
-                    : "معاينة وتفاصيل كشف الأجر الفردي للعامل"
-                  }
-                </h3>
+                <Printer className="h-5 w-5 text-brand-gold shrink-0" />
+                <div>
+                  <h3 className="font-black text-stone-900 text-sm">
+                    {printTarget.type === 'all' 
+                      ? "معاينة كشف الحساب العام للأجور" 
+                      : "معاينة كشف الأجر الفردي بالتفصيل"
+                    }
+                  </h3>
+                  <p className="text-[10px] text-stone-500 mt-0.5">
+                    💡 يفتح المتصفح نافذة الطباعة تلقائياً؛ يمكنك أيضاً استخدام الاختصار (Ctrl + P) للطباعة.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 self-end sm:self-auto">
                 <button
                   onClick={() => window.print()}
-                  className="px-4 py-2 bg-brand-gold hover:bg-brand-gold/90 text-stone-950 font-extrabold rounded-lg text-xs transition flex items-center gap-1.5"
+                  className="px-4 py-2 bg-brand-gold hover:bg-brand-gold/90 text-stone-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <Printer className="h-4 w-4" />
                   <span>بدء الطباعة الآن (Imprimer)</span>
                 </button>
                 <button
                   onClick={() => setPrintTarget(null)}
-                  className="p-2 border border-stone-250 hover:bg-stone-50 rounded-lg text-stone-600 transition"
+                  className="px-3 py-2 border border-stone-300 hover:bg-stone-50 rounded-lg text-stone-700 font-bold text-xs transition flex items-center gap-1 cursor-pointer"
                   title="إغلاق المعاينة"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4 text-rose-600" />
+                  <span>إغلاق (Fermer)</span>
                 </button>
               </div>
             </div>
@@ -1070,6 +1076,17 @@ export default function PointageOuvriers({
               <div className="hidden print:block text-center text-[9px] text-stone-450 mt-8 border-t border-stone-200 pt-3">
                 تم الاحتساب والطباعة بنجاح بنظام كشف أجور العمال والمحاسبة الذاتية الحرة للورشة. الشفافية أساس الرزق الحلال.
               </div>
+            </div>
+
+            {/* Bottom Actions Row (Hidden in Print) */}
+            <div className="flex justify-center border-t border-stone-200 pt-4 print:hidden select-none">
+              <button
+                onClick={() => setPrintTarget(null)}
+                className="px-6 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 hover:border-stone-400 font-extrabold rounded-lg text-xs transition cursor-pointer flex items-center gap-2"
+              >
+                <X className="h-4 w-4 text-rose-600" />
+                <span>إغلاق كشف المعاينة (Fermer)</span>
+              </button>
             </div>
 
           </div>
