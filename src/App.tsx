@@ -563,253 +563,184 @@ export default function App() {
   };
 
   // Restores initial master template list
-  const handleResetToDefault = () => {
-    if (
-      window.confirm(
-        "Êtes-vous sûr de vouloir réinitialiser l'ensemble de votre base de données ? Tous vos projets seront supprimés et remplacés par l'exemple de référence Palais El Bahia Marrakech."
-      )
-    ) {
-      const defaultProj: Project = {
-        id: "project-bahia",
-        name: "Projet de Reconstruction de Palier - El Bahia Marrakech",
-        description: "Restauration monument historique, Palais El Bahia Marrakech",
-        details: defaultProjectDetails,
-        workItems: initialWorkItems,
-        measurementLines: initialMeasurementLines,
-        suiviTravaux: [
-          { itemId: "item-1", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Fouilles terminées conformément à l'arborescence des calculs." },
-          { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Démolition de l'ancien palier dégradé achevée." },
-          { itemId: "item-3", progressPercentage: 40, lastUpdated: "2026-06-19", remarks: "Coulage des semelles S1 fait. Coffrage des chaînages en cours." }
-        ],
-        workers: [
-          { id: "W1", name: "Hassan Sahouak", role: "Maâlem Tapisseur", dailyRate: 150, phone: "+212 611 123 456" },
-          { id: "W2", name: "Ali Elhdili", role: "Maâlem Maçon Traditional", dailyRate: 140, phone: "+212 622 234 567" },
-          { id: "W3", name: "Yassine Erraissi", role: "Maâlem Zelligeur", dailyRate: 150, phone: "+212 633 345 678" },
-          { id: "W4", name: "Ali Bnichou", role: "Maâlem Plâtrier", dailyRate: 150, phone: "+212 644 456 789" },
-          { id: "W5", name: "Mohamed Messaoudi", role: "Maâlem Sculpteur Bois", dailyRate: 200, phone: "+212 655 567 890" },
-          { id: "W6", name: "Mohmed Bel Madani", role: "Maâlem Charpentier", dailyRate: 150, phone: "+212 666 678 901" },
-          { id: "W7", name: "Mouad Farhane", role: "Maâlem Sculptures Plâtre", dailyRate: 200, phone: "+212 677 789 012" },
-          { id: "W8", name: "Khalid Abouaali", role: "Khedam (Aide-Maçon)", dailyRate: 120, phone: "+212 688 890 123" },
-          { id: "W9", name: "Mehdi Ferhane", role: "Khedam (Manoeuvre)", dailyRate: 130, phone: "+212 699 901 234" },
-          { id: "W10", name: "Abderahmane Ferhan", role: "Khedam (Manoeuvre)", dailyRate: 110, phone: "+212 610 012 345" },
-          { id: "W11", name: "Ali Belkassi", role: "Maâlem Staffeur", dailyRate: 150, phone: "+212 620 123 456" },
-          { id: "W12", name: "Mustapha El Hachimi", role: "Khedam (Manoeuvre)", dailyRate: 110, phone: "+212 630 234 567" },
-          { id: "W13", name: "Abderahman Ait Ali", role: "Khedam (Manoeuvre)", dailyRate: 130, phone: "+212 640 345 678" }
-        ],
-        pointages: [
-          {
-            id: "ptg-seed-1",
-            date: "2026-06-01",
-            pointages: [
-              { workerId: "W2", status: "present", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W6", status: "present", advancePaid: 0 },
-              { workerId: "W7", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "بداية الأوراش الرسمية لشهر يونيو 2026 بقصر الباهية"
-          },
-          {
-            id: "ptg-seed-2",
-            date: "2026-06-02",
-            pointages: [
-              { workerId: "W2", status: "present", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 500 },
-              { workerId: "W6", status: "present", advancePaid: 0 },
-              { workerId: "W7", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "سلفة 500 درهم مدفوعة نقداً للماعلم محمد المسعودي"
-          },
-          {
-            id: "ptg-seed-3",
-            date: "2026-06-03",
-            pointages: [
-              { workerId: "W2", status: "present", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W6", status: "present", advancePaid: 0 },
-              { workerId: "W7", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W10", status: "present", advancePaid: 500 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "سلفة مدفوعة للعامل عبد الرحمان فرحان بقيمة 500 درهم"
-          },
-          {
-            id: "ptg-seed-4",
-            date: "2026-06-04",
-            pointages: [
-              { workerId: "W2", status: "present", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W7", status: "present", advancePaid: 1400 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "تسليم تسبيق للماعلم معاد فرحان بقيمة 1400 درهم"
-          },
-          {
-            id: "ptg-seed-5",
-            date: "2026-06-05",
-            pointages: [
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W11", status: "present", advancePaid: 1400 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "تسليم تسبيق للماعلم علي بلقاسي بقيمة 1400 درهم"
-          },
-          {
-            id: "ptg-seed-6",
-            date: "2026-06-06",
-            pointages: [
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W9", status: "present", advancePaid: 600 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "تسليم تسبيق للعامل مهدي فرحان بقيمة 600 درهم"
-          },
-          {
-            id: "ptg-seed-7",
-            date: "2026-06-10",
-            pointages: [
-              { workerId: "W2", status: "demi-journee", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 200 },
-              { workerId: "W7", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W11", status: "present", advancePaid: 200 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "بيانات الحضور اليومي للمشتروات والعمال بقصر الباهية"
-          },
-          {
-            id: "ptg-seed-8",
-            date: "2026-06-11",
-            pointages: [
-              { workerId: "W2", status: "present", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W6", status: "present", advancePaid: 0 },
-              { workerId: "W7", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 100 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "أشغال تهيئة الجص والجبس"
-          },
-          {
-            id: "ptg-seed-9",
-            date: "2026-06-12",
-            pointages: [
-              { workerId: "W2", status: "present", advancePaid: 535 },
-              { workerId: "W3", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W10", status: "present", advancePaid: 0 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "تسليم تسبيق للماعلم علي الهديل بقيمة 535 درهم"
-          },
-          {
-            id: "ptg-seed-10",
-            date: "2026-06-13",
-            pointages: [
-              { workerId: "W2", status: "present", advancePaid: 535 },
-              { workerId: "W3", status: "demi-journee", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "تسوية الحضور وتسليم الدفعة الثانية للماعلم علي الهديل"
-          },
-          {
-            id: "ptg-seed-11",
-            date: "2026-06-14",
-            pointages: [
-              { workerId: "W1", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 500 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W9", status: "demi-journee", advancePaid: 0 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "حضور الماعلم حسن السهواك وباقي الأطقم"
-          },
-          {
-            id: "ptg-seed-12",
-            date: "2026-06-17",
-            pointages: [
-              { workerId: "W1", status: "present", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 100 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 0 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "تسليم تسبيق للماعلم ياسين المختار بقيمة 100 درهم"
-          },
-          {
-            id: "ptg-seed-13",
-            date: "2026-06-18",
-            pointages: [
-              { workerId: "W1", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 200 },
-              { workerId: "W8", status: "present", advancePaid: 500 },
-              { workerId: "W13", status: "present", advancePaid: 0 }
-            ],
-            note: "أشغال التلبيس والزليج التقليدي لورش قصر الباهية"
-          },
-          {
-            id: "ptg-seed-14",
-            date: "2026-06-19",
-            pointages: [
-              { workerId: "W1", status: "present", advancePaid: 0 },
-              { workerId: "W4", status: "present", advancePaid: 0 },
-              { workerId: "W5", status: "present", advancePaid: 100 },
-              { workerId: "W8", status: "present", advancePaid: 0 },
-              { workerId: "W13", status: "demi-journee", advancePaid: 0 }
-            ],
-            note: "تجهيز الرسوم والفسيفساء تحت إشراف الماعلمية"
-          }
-        ],
-        expenses: [
-          { id: "exp-seed-1", date: "2026-06-15", category: "materiaux", label: "5 tonnes de chaux hydraulique", amount: 2500, quantity: 5, unitPrice: 500, remarks: "Fournisseur Chaux Tensift" },
-          { id: "exp-seed-2", date: "2026-06-16", category: "materiaux", label: "20 m² de dalles de Bejmat pré-cuit ocre", amount: 1800, quantity: 20, unitPrice: 90, remarks: "Atelier Artisanal Géliz" },
-          { id: "exp-seed-3", date: "2026-06-17", category: "chauffeur", label: "Livraison matériaux et trajets chantier", amount: 450, remarks: "Camion Benne Omar" },
-          { id: "exp-seed-4", date: "2026-06-18", category: "droguerie", label: "Droguerie : Acides, colles, brosses, clous et fils d'attache", amount: 270, remarks: "Droguerie Bab Doukkala" }
-        ]
-      };
-      setProjects([defaultProj]);
-      setSelectedProjectId("project-bahia");
-      setWorkItems(initialWorkItems);
-      setMeasurementLines(initialMeasurementLines);
-      setProjectDetails(defaultProjectDetails);
-      setSuiviTravaux(defaultProj.suiviTravaux || []);
-      setExpenses(defaultProj.expenses || []);
-      setWorkers(defaultProj.workers || []);
-      setPointages(defaultProj.pointages || []);
-      setActiveTab("metre");
-      localStorage.setItem("bahia_multi_projects", JSON.stringify([defaultProj]));
-      localStorage.setItem("bahia_selected_project_id", "project-bahia");
+  const handleResetToDefault = async () => {
+    const confirmMessage = "هل أنت متأكد من رغبتك في إعادة تعيين البرنامج إلى حالة المصنع (Réinitialisation d'usine)؟\n\n" +
+                           "ستؤدي هذه العملية إلى:\n" +
+                           "١. حفظ البيانات الحالية تلقائياً في ملف أرشيفي بداخل مسار البرنامج (archives/)\n" +
+                           "٢. مسح جميع الكوكيز (Cookies) من المتصفح\n" +
+                           "٣. حذف الذاكرة التخزينية المحلية بالكامل لإدخال بيانات جديدة (39 عامل بالتفصيل)\n\n" +
+                           "اضغط موافق للمتابعة.";
+    
+    if (!window.confirm(confirmMessage)) {
+      return;
     }
+
+    let archiveInfoMessage = "";
+
+    // 1. Send current projects payload to server to safe archive
+    try {
+      const archiveResponse = await fetch("/api/archive", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(projects)
+      });
+      if (archiveResponse.ok) {
+        const archiveResult = await archiveResponse.json();
+        if (archiveResult && archiveResult.success) {
+          archiveInfoMessage = `✅ تم حفظ الأرشيف بنجاح في:\n📁 ${archiveResult.fileName}\nبداخل مجلد الأرشيف الخاص بالبرنامج (archives/)\n\n`;
+        }
+      }
+    } catch (err) {
+      console.error("Failed to save archive file on server:", err);
+      // Emergency Client Download Fallback
+      try {
+        const backupObj = {
+          version: "2.0_multi_project_emergency_archive",
+          timestamp: new Date().toISOString(),
+          projects
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+        const downloadAnchor = document.createElement("a");
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `archive_sauvegarde_emergency_${new Date().toISOString().slice(0, 10)}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        archiveInfoMessage = "⚠️ تعذر الحفظ المباشر على خادم الجهاز، تم تنزيل الأرشيف كملف في متصفحك تلقائياً للحماية.\n\n";
+      } catch (backupErr) {
+        console.error("Emergency backup write failed", backupErr);
+      }
+    }
+
+    // 2. Erase browser cookies
+    try {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+      }
+    } catch (cookieErr) {
+      console.error("Error clearing cookies:", cookieErr);
+    }
+
+    // 3. Clear localStorage and sessionStorage
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch (storageErr) {
+      console.error("Error clearing local storage:", storageErr);
+    }
+
+    // 4. Create premium default Palais El Bahia Project with all 39 elements
+    const defaultProj: Project = {
+      id: "project-bahia",
+      name: "Projet de Reconstruction de Palier - El Bahia Marrakech",
+      description: "Restauration monument historique, Palais El Bahia Marrakech",
+      details: defaultProjectDetails,
+      workItems: initialWorkItems,
+      measurementLines: initialMeasurementLines,
+      suiviTravaux: [
+        { itemId: "item-1", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Fouilles terminées conformément à l'arborescence des calculs." },
+        { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Démolition de l'ancien palier dégradé achevée." },
+        { itemId: "item-3", progressPercentage: 40, lastUpdated: "2026-06-19", remarks: "Coulage des semelles S1 fait. Coffrage des chaînages en cours." }
+      ],
+      workers: initialWorkers, // contains all 39 workers!
+      pointages: [
+        {
+          id: "ptg-seed-1",
+          date: "2026-06-01",
+          pointages: [
+            { workerId: "W2", status: "present", advancePaid: 0 },
+            { workerId: "W3", status: "present", advancePaid: 0 },
+            { workerId: "W5", status: "present", advancePaid: 0 },
+            { workerId: "W6", status: "present", advancePaid: 0 },
+            { workerId: "W7", status: "present", advancePaid: 0 },
+            { workerId: "W8", status: "present", advancePaid: 0 },
+            { workerId: "W13", status: "present", advancePaid: 0 }
+          ],
+          note: "بداية الأوراش الرسمية لشهر يونيو 2026 بقصر الباهية"
+        },
+        {
+          id: "ptg-seed-2",
+          date: "2026-06-02",
+          pointages: [
+            { workerId: "W2", status: "present", advancePaid: 0 },
+            { workerId: "W3", status: "present", advancePaid: 0 },
+            { workerId: "W5", status: "present", advancePaid: 500 },
+            { workerId: "W6", status: "present", advancePaid: 0 },
+            { workerId: "W7", status: "present", advancePaid: 0 },
+            { workerId: "W8", status: "present", advancePaid: 0 },
+            { workerId: "W13", status: "present", advancePaid: 0 }
+          ],
+          note: "سلفة 500 درهم مدفوعة نقداً للماعلم محمد المسعودي"
+        },
+        {
+          id: "ptg-seed-3",
+          date: "2026-06-03",
+          pointages: [
+            { workerId: "W2", status: "present", advancePaid: 0 },
+            { workerId: "W3", status: "present", advancePaid: 0 },
+            { workerId: "W5", status: "present", advancePaid: 0 },
+            { workerId: "W6", status: "present", advancePaid: 0 },
+            { workerId: "W7", status: "present", advancePaid: 0 },
+            { workerId: "W8", status: "present", advancePaid: 0 },
+            { workerId: "W16", status: "present", advancePaid: 500 },
+            { workerId: "W13", status: "present", advancePaid: 0 }
+          ],
+          note: "سلفة مدفوعة للعامل عبد الرحمان فرحان بقيمة 500 درهم"
+        },
+        {
+          id: "ptg-seed-4",
+          date: "2026-06-04",
+          pointages: [
+            { workerId: "W2", status: "present", advancePaid: 0 },
+            { workerId: "W3", status: "present", advancePaid: 0 },
+            { workerId: "W5", status: "present", advancePaid: 0 },
+            { workerId: "W8", status: "present", advancePaid: 1400 },
+            { workerId: "W13", status: "present", advancePaid: 0 }
+          ],
+          note: "تسليم تسبيق للماعلم معاد فرحان بقيمة 1400 درهم"
+        }
+      ],
+      expenses: [
+        { id: "exp-seed-1", date: "2026-06-15", category: "materiaux", label: "5 tonnes de chaux hydraulique", amount: 2500, quantity: 5, unitPrice: 500, remarks: "Fournisseur Chaux Tensift" },
+        { id: "exp-seed-2", date: "2026-06-16", category: "materiaux", label: "20 m² de dalles de Bejmat pré-cuit ocre", amount: 1800, quantity: 20, unitPrice: 90, remarks: "Atelier Artisanal Géliz" }
+      ]
+    };
+
+    // Save default initial state to computer storage via Node API if local
+    if (syncStatus === "local") {
+      try {
+        await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify([defaultProj])
+        });
+      } catch (err) {
+        console.error("Failed to seed default database on server:", err);
+      }
+    }
+
+    setProjects([defaultProj]);
+    setSelectedProjectId("project-bahia");
+    setWorkItems(initialWorkItems);
+    setMeasurementLines(initialMeasurementLines);
+    setProjectDetails(defaultProjectDetails);
+    setSuiviTravaux(defaultProj.suiviTravaux || []);
+    setExpenses(defaultProj.expenses || []);
+    setWorkers(defaultProj.workers || []);
+    setPointages(defaultProj.pointages || []);
+    setActiveTab("metre");
+
+    localStorage.setItem("bahia_multi_projects", JSON.stringify([defaultProj]));
+    localStorage.setItem("bahia_selected_project_id", "project-bahia");
+
+    window.alert(`${archiveInfoMessage}🧹 تم بنجاح تفريغ جميع الكوكيز والبيانات المخزنة وإعادة تهيئة البرنامج بنجاح!`);
   };
 
   // Backup exporter for multi-projects portability

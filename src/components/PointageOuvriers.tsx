@@ -20,7 +20,8 @@ import {
   X,
   Eye,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Pencil
 } from "lucide-react";
 
 interface PointageOuvriersProps {
@@ -46,6 +47,58 @@ export default function PointageOuvriers({
 
   // Printable situation state (Fiche de paie / reçu)
   const [printTarget, setPrintTarget] = useState<{ type: 'all' | 'individual', workerId?: string } | null>(null);
+
+  // Editing worker state
+  const [editingWorker, setEditingWorker] = useState<Worker | null>(null);
+  const [editWorkerName, setEditWorkerName] = useState("");
+  const [editWorkerRole, setEditWorkerRole] = useState("");
+  const [editWorkerRate, setEditWorkerRate] = useState("");
+  const [editWorkerPhone, setEditWorkerPhone] = useState("");
+  const [editWorkerCin, setEditWorkerCin] = useState("");
+  const [editWorkerAdvance, setEditWorkerAdvance] = useState("");
+
+  const handleOpenEditModal = (w: Worker) => {
+    setEditingWorker(w);
+    setEditWorkerName(w.name);
+    setEditWorkerRole(w.role);
+    setEditWorkerRate(String(w.dailyRate));
+    setEditWorkerPhone(w.phone || "");
+    setEditWorkerCin(w.cin || "");
+    setEditWorkerAdvance(String(w.initialAdvance || 0));
+  };
+
+  const handleSaveEditedWorker = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingWorker) return;
+
+    if (!editWorkerName.trim()) {
+      alert("Veuillez saisir le nom complet de l'ouvrier.");
+      return;
+    }
+    const rate = parseFloat(editWorkerRate);
+    if (isNaN(rate) || rate <= 0) {
+      alert("Veuillez spécifier un tarif journalier valide supérieur à 0.");
+      return;
+    }
+
+    const updated = workers.map(w => {
+      if (w.id === editingWorker.id) {
+        return {
+          ...w,
+          name: editWorkerName.trim(),
+          role: editWorkerRole.trim(),
+          dailyRate: rate,
+          phone: editWorkerPhone.trim() || undefined,
+          cin: editWorkerCin.trim() || undefined,
+          initialAdvance: parseFloat(editWorkerAdvance) || 0
+        };
+      }
+      return w;
+    });
+
+    onUpdateWorkers(updated);
+    setEditingWorker(null);
+  };
 
   // Pointage worksheet states
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
@@ -530,12 +583,24 @@ export default function PointageOuvriers({
                       {w.role} {w.cin && <span className="font-mono bg-stone-100 text-stone-700 px-1 rounded-sm text-[9px] font-bold uppercase">{w.cin}</span>} • <strong className="text-brand-brown font-semibold">{w.dailyRate} MAD/j</strong>
                     </span>
                   </div>
-                  <button
-                    onClick={() => handleDeleteWorker(w.id)}
-                    className="p-1 text-stone-400 hover:text-red-650 hover:bg-red-50 rounded transition"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditModal(w)}
+                      className="p-1 text-stone-400 hover:text-brand-gold hover:bg-stone-50 rounded transition"
+                      title="Modifier profile de l'intervenant (تعديل العامل)"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteWorker(w.id)}
+                      className="p-1 text-stone-400 hover:text-red-650 hover:bg-red-50 rounded transition"
+                      title="Retirer l'ouvrier (حذف العامل)"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
 
@@ -784,6 +849,7 @@ export default function PointageOuvriers({
                 <th className="px-4 py-3.5 text-right font-extrabold text-rose-700">مجموع التسبيقات (Avances)</th>
                 <th className="px-5 py-3.5 text-right font-extrabold text-brand-brown bg-brand-clay/5">الصافي المتبقي</th>
                 <th className="px-3 py-3.5 text-center font-extrabold text-stone-500">طباعة (Fiche)</th>
+                <th className="px-3 py-3.5 text-center font-extrabold text-stone-500">خيارات (Actions)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-150">
@@ -867,6 +933,25 @@ export default function PointageOuvriers({
                         <Printer className="h-3 w-3 text-brand-gold" />
                         <span>كشف</span>
                       </button>
+                    </td>
+                    <td className="px-3 py-3 text-center border-l border-stone-100 select-none">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => handleOpenEditModal(w)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-stone-50 hover:bg-emerald-50 text-stone-700 hover:text-emerald-700 border border-stone-250 hover:border-emerald-300 rounded font-black text-[10px] transition"
+                          title="Modifier profile de l'intervenant (تعديل كامل البيانات)"
+                        >
+                          <Pencil className="h-2.5 w-2.5 text-emerald-600" />
+                          <span>تعديل</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteWorker(w.id)}
+                          className="inline-flex items-center gap-1 px-1.5 py-1 bg-stone-50 hover:bg-rose-50 text-stone-400 hover:text-rose-600 border border-stone-250 hover:border-rose-350 rounded font-black text-[10px] transition"
+                          title="Supprimer l'ouvrier (حذف)"
+                        >
+                          <Trash2 className="h-2.5 w-2.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -1211,6 +1296,135 @@ export default function PointageOuvriers({
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ==================== WORKER PROFILE EDIT MODAL ==================== */}
+      {editingWorker && (
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingWorker(null);
+            }
+          }}
+          className="fixed inset-0 bg-stone-900/80 backdrop-blur-xs flex items-center justify-center z-50 p-4"
+        >
+          <div className="bg-white rounded-2xl border border-stone-250 w-full max-w-md p-5 shadow-xl space-y-4 animate-in fade-in zoom-in duration-150">
+            <div className="flex justify-between items-center border-b border-stone-150 pb-3">
+              <div className="flex items-center gap-2">
+                <Pencil className="h-5 w-5 text-brand-gold shrink-0" />
+                <div>
+                  <h3 className="font-sans font-black text-xs uppercase text-stone-900 tracking-wider">تعديل بيانات العامل</h3>
+                  <p className="text-stone-400 text-[10px]">Modifier le profil de l'ouvrier</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setEditingWorker(null)}
+                className="p-1 hover:bg-stone-100 rounded-lg text-stone-400 hover:text-stone-700 transition animate-none"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditedWorker} className="space-y-4 text-xs font-sans text-right">
+              <div className="space-y-1">
+                <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Nom Complet / الاسم الكامل *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="ex: Mohamed Berrada"
+                  value={editWorkerName}
+                  onChange={e => setEditWorkerName(e.target.value)}
+                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2.5 text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Poste / الحرفة *</label>
+                  <select
+                    value={editWorkerRole}
+                    onChange={e => setEditWorkerRole(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-150 rounded-lg p-2 focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                  >
+                    <option value="Chef de chantier">🔧 Chef de chantier (رئيس ورش)</option>
+                    <option value="Maçon Zelligeur">🧱 Maâlem Zellige / Bejmat (زلايجي)</option>
+                    <option value="Maçon Plâtrier">🎨 Maâlem Plâtre (نقاش الجبس)</option>
+                    <option value="Maçon traditionnel">🧱 Maçon traditionnel (بناء تقليدي)</option>
+                    <option value="Charpentier">🪵 Charpentier (نجار تقليدي)</option>
+                    <option value="Ouvrier qualifié">⚒️ Ouvrier Qualifié (صانع مؤهل)</option>
+                    <option value="Manœuvre">💪 Manœuvre (مساعد/عامل شاق)</option>
+                    <option value="Gardien">🔑 Gardien (حارس ورش)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Tarif/j (MAD) / الأجرة اليومية *</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="ex: 150"
+                    value={editWorkerRate}
+                    onChange={e => setEditWorkerRate(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 focus:ring-1 focus:ring-brand-gold focus:outline-none font-semibold text-stone-900 text-left"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">CIN (N° d'identité) / ب.ت.و</label>
+                  <input
+                    type="text"
+                    placeholder="ex: PB51721"
+                    value={editWorkerCin}
+                    onChange={e => setEditWorkerCin(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900 font-mono uppercase text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Téléphone / الهاتف</label>
+                  <input
+                    type="text"
+                    placeholder="ex: 06..."
+                    value={editWorkerPhone}
+                    onChange={e => setEditWorkerPhone(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">تسبيق أولي (Avance générale initial)</label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="ex: 300"
+                  value={editWorkerAdvance}
+                  onChange={e => setEditWorkerAdvance(e.target.value)}
+                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 focus:ring-1 focus:ring-brand-gold focus:outline-none font-semibold text-stone-900 text-left"
+                />
+              </div>
+
+              <div className="flex gap-2 justify-end pt-3 border-t border-stone-150 select-none">
+                <button
+                  type="button"
+                  onClick={() => setEditingWorker(null)}
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-900 rounded-lg font-bold transition text-[11px]"
+                >
+                  إلغاء (Annuler)
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-brand-brown hover:bg-stone-950 text-brand-gold hover:text-white rounded-lg font-bold transition text-[11px] flex items-center gap-1"
+                >
+                  <Save className="h-3.5 w-3.5" />
+                  حفظ التعديلات (Enregistrer)
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

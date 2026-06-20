@@ -62,6 +62,50 @@ async function startServer() {
     }
   });
 
+  // API: Archive current projects database
+  app.post("/api/archive", (req, res) => {
+    try {
+      let dataToArchive = req.body;
+      
+      // If client didn't supply data, try to load from the existing file
+      if (!dataToArchive || !Array.isArray(dataToArchive) || dataToArchive.length === 0) {
+        if (fs.existsSync(ACTUAL_DB_FILE)) {
+          try {
+            const fileContent = fs.readFileSync(ACTUAL_DB_FILE, "utf-8");
+            dataToArchive = JSON.parse(fileContent);
+          } catch (e) {
+            dataToArchive = [];
+          }
+        } else {
+          dataToArchive = [];
+        }
+      }
+
+      // Ensure directory where ACTUAL_DB_FILE sits has an "archives" subdirectory
+      const baseDir = path.dirname(ACTUAL_DB_FILE);
+      const archivesDir = path.join(baseDir, "archives");
+      if (!fs.existsSync(archivesDir)) {
+        fs.mkdirSync(archivesDir, { recursive: true });
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const archiveFileName = `archive_projects_${timestamp}.json`;
+      const archiveFilePath = path.join(archivesDir, archiveFileName);
+
+      fs.writeFileSync(archiveFilePath, JSON.stringify(dataToArchive, null, 2), "utf-8");
+      
+      return res.json({ 
+        success: true, 
+        message: "Les données ont été archivées avec succès sur l'ordinateur.", 
+        fileName: archiveFileName,
+        filePath: archiveFilePath
+      });
+    } catch (error: any) {
+      console.error("Error archiving projects:", error);
+      return res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
   // Vite middleware setup
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
