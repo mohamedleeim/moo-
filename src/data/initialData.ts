@@ -1,4 +1,4 @@
-import { WorkItem, MeasurementLine, ProjectDetails, IndexHistory } from "../types";
+import { WorkItem, MeasurementLine, ProjectDetails, IndexHistory, Worker } from "../types";
 
 export const initialWorkItems: WorkItem[] = [
   { id: "item-1", code: "1.01", category: "I - GROS OEUVRE - ETANCHEITE", description: "Installation du chantier", unit: "Ens", unitPrice: 25000.00, contractQuantity: 1.0 },
@@ -370,4 +370,46 @@ export const indexHistoryBAT6: IndexHistory[] = [
   { date: "2026-04", value: 249.1, label: "Avril 2026" },
   { date: "2026-05", value: 249.5, label: "Mai 2026" },
   { date: "2026-06", value: 249.0, label: "Juin 2026 (I Actuel)" }
+];
+
+export const initialWorkers: Worker[] = [
+  { id: "W1", name: "HASSAN SAHOUAK", cin: "E572138", role: "Maâlem Tapisseur", dailyRate: 150, phone: "+212 611 123 456" },
+  { id: "W2", name: "ALI ELHDILI", cin: "PB51721", role: "Maçon traditionnel", dailyRate: 140, phone: "+212 622 234 567" },
+  { id: "W3", name: "YASSINE ERRAISSI", cin: "", role: "Maçon Zelligeur", dailyRate: 150, phone: "+212 633 345 678" },
+  { id: "W4", name: "MOHMAD TADGHOUT", cin: "IC67853", role: "Maçon traditionnel", dailyRate: 140, phone: "+212 612 345 678" },
+  { id: "W5", name: "ALI BNICHOU", cin: "PB101378", role: "Maçon Plâtrier", dailyRate: 150, phone: "+212 644 456 789" },
+  { id: "W6", name: "MOHAMED MESSAOUDI", cin: "P156816", role: "Charpentier", dailyRate: 200, phone: "+212 655 567 890" },
+  { id: "W7", name: "Mohmed bel madani", cin: "PA13900", role: "Charpentier", dailyRate: 150, phone: "+212 666 678 901" },
+  { id: "W8", name: "MOUAD FARHANE", cin: "E621606", role: "Maçon Plâtrier", dailyRate: 200, phone: "+212 677 789 012" },
+  { id: "W9", name: "ABDELKABIR JIDOUR", cin: "N299469", role: "Ouvrier qualifié", dailyRate: 135, phone: "+212 671 234 567" },
+  { id: "W10", name: "ISMAIL HEBLAOUI", cin: "PA214421", role: "Maçon traditionnel", dailyRate: 140, phone: "+212 672 345 678" },
+  { id: "W11", name: "ANAS CHAHBOUN", cin: "VA134042", role: "Ouvrier qualifié", dailyRate: 135, phone: "+212 673 456 789" },
+  { id: "W12", name: "HARCHAOUI MOHMED", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W13", name: "KHALID ABOUAALI", cin: "E773689", role: "Ouvrier qualifié", dailyRate: 120, phone: "+212 688 890 123" },
+  { id: "W14", name: "ALI OUHMAD", cin: "IB223133", role: "Ouvrier qualifié", dailyRate: 135, phone: "+212 674 567 890" },
+  { id: "W15", name: "MEHDI FERHANE", cin: "", role: "Manœuvre", dailyRate: 130, phone: "+212 699 901 234" },
+  { id: "W16", name: "ABDERAHMANE FERHAN", cin: "", role: "Manœuvre", dailyRate: 110, phone: "+212 610 012 345" },
+  { id: "W17", name: "ALI BELKASSI", cin: "", role: "Maçon Plâtrier", dailyRate: 150, phone: "+212 620 123 456" },
+  { id: "W18", name: "LEHCEN EL BAZE", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W19", name: "ABDERRAHMANE OULKHIR", cin: "IC211468", role: "Ouvrier qualifié", dailyRate: 135, phone: "" },
+  { id: "W20", name: "LEHCEN LKHER", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W21", name: "OUHTOUSS ABDERAHMAN", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W22", name: "BASSOU OUSSOU", cin: "PA129630", role: "Ouvrier qualifié", dailyRate: 135, phone: "" },
+  { id: "W23", name: "MUSTAPHA EL HACHIMI", cin: "PA80631", role: "Manœuvre", dailyRate: 110, phone: "+212 630 234 567" },
+  { id: "W24", name: "ABDERAHMMAN AIT ALI", cin: "PA109362", role: "Manœuvre", dailyRate: 130, phone: "+212 640 345 678" },
+  { id: "W25", name: "ABDENBI HIMMI", cin: "I592603", role: "Ouvrier qualifié", dailyRate: 135, phone: "" },
+  { id: "W26", name: "HASSAN ZAAZAA", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W27", name: "MOHMED FASKA", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W28", name: "HATIM MUSTAPHA", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W29", name: "MUSTAPHA DIHA", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W30", name: "SAID OUKBIB", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W31", name: "MOHAMED OUABID", cin: "PB130661", role: "Ouvrier qualifié", dailyRate: 135, phone: "" },
+  { id: "W32", name: "ZAID EL FELLAH", cin: "K149570", role: "Ouvrier qualifié", dailyRate: 135, phone: "" },
+  { id: "W33", name: "HOUSSIENE EL JABAR", cin: "IC 160611", role: "Ouvrier qualifié", dailyRate: 135, phone: "" },
+  { id: "W34", name: "SAID OUHAMCHA", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W35", name: "KHALID ATAZARIN", cin: "PB304072", role: "Ouvrier qualifié", dailyRate: 135, phone: "" },
+  { id: "W36", name: "MOHAMED OUMIDO", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W37", name: "SAID OUABID", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W38", name: "SLIMAN SABIR", cin: "", role: "Manœuvre", dailyRate: 120, phone: "" },
+  { id: "W39", name: "MOHAMED OUAHTTOUS", cin: "IC179232", role: "Ouvrier qualifié", dailyRate: 135, phone: "" }
 ];

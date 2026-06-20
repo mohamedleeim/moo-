@@ -39,6 +39,7 @@ export default function PointageOuvriers({
   const [newWorkerRole, setNewWorkerRole] = useState("Maçon traditionnel");
   const [newWorkerRate, setNewWorkerRate] = useState("");
   const [newWorkerPhone, setNewWorkerPhone] = useState("");
+  const [newWorkerCin, setNewWorkerCin] = useState("");
   const [newWorkerAdvance, setNewWorkerAdvance] = useState("");
 
   // Printable situation state (Fiche de paie / reçu)
@@ -92,6 +93,7 @@ export default function PointageOuvriers({
       role: newWorkerRole.trim(),
       dailyRate: rate,
       phone: newWorkerPhone.trim() || undefined,
+      cin: newWorkerCin.trim() || undefined,
       initialAdvance: initialAdv
     };
 
@@ -113,6 +115,7 @@ export default function PointageOuvriers({
     setNewWorkerName("");
     setNewWorkerRate("");
     setNewWorkerPhone("");
+    setNewWorkerCin("");
     setNewWorkerAdvance("");
   };
 
@@ -445,27 +448,38 @@ export default function PointageOuvriers({
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
+                <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold">CIN (N° d'identité)</label>
+                <input
+                  type="text"
+                  placeholder="ex: PB51721"
+                  value={newWorkerCin}
+                  onChange={e => setNewWorkerCin(e.target.value)}
+                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900 font-mono uppercase"
+                />
+              </div>
+
+              <div className="space-y-1">
                 <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold">Téléphone (Opt)</label>
                 <input
                   type="text"
-                  placeholder="ex: 06... / 07..."
+                  placeholder="ex: 06..."
                   value={newWorkerPhone}
                   onChange={e => setNewWorkerPhone(e.target.value)}
                   className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900"
                 />
               </div>
+            </div>
 
-              <div className="space-y-1">
-                <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold">تسبيق أولي (Avance)</label>
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="ex: 300"
-                  value={newWorkerAdvance}
-                  onChange={e => setNewWorkerAdvance(e.target.value)}
-                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 focus:ring-1 focus:ring-brand-gold focus:outline-none font-semibold text-stone-900"
-                />
-              </div>
+            <div className="space-y-1">
+              <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold">تسبيق أولي (Avance)</label>
+              <input
+                type="number"
+                min="0"
+                placeholder="ex: 300"
+                value={newWorkerAdvance}
+                onChange={e => setNewWorkerAdvance(e.target.value)}
+                className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 focus:ring-1 focus:ring-brand-gold focus:outline-none font-semibold text-stone-900"
+              />
             </div>
 
             <button
@@ -483,8 +497,10 @@ export default function PointageOuvriers({
               {workers.map(w => (
                 <div key={w.id} className="py-2 flex items-center justify-between text-xs font-sans">
                   <div className="space-y-0.5">
-                    <strong className="text-stone-850 font-bold block">{w.id === "W1" || w.id === "W2" || w.id === "W3" ? w.name : w.name}</strong>
-                    <span className="text-[10px] text-stone-400 block font-medium capitalize">{w.role} • <strong className="text-brand-brown font-semibold">{w.dailyRate} MAD/j</strong></span>
+                    <strong className="text-stone-850 font-bold block">{w.name}</strong>
+                    <span className="text-[10px] text-stone-400 block font-medium capitalize">
+                      {w.role} {w.cin && <span className="font-mono bg-stone-100 text-stone-700 px-1 rounded-sm text-[9px] font-bold uppercase">{w.cin}</span>} • <strong className="text-brand-brown font-semibold">{w.dailyRate} MAD/j</strong>
+                    </span>
                   </div>
                   <button
                     onClick={() => handleDeleteWorker(w.id)}
@@ -992,7 +1008,8 @@ export default function PointageOuvriers({
                       <div>
                         <span className="text-[9px] uppercase font-bold text-stone-400 block">العامل المتلقي (Bénéficiaire) :</span>
                         <strong className="text-sm text-stone-900 block font-black mt-0.5">{worker.name}</strong>
-                        {worker.phone && <span className="text-[10px] text-stone-500 font-mono">الهاتف: {worker.phone}</span>}
+                        {worker.cin && <span className="text-[10px] text-stone-700 font-mono block">CIN: <strong className="font-bold">{worker.cin}</strong></span>}
+                        {worker.phone && <span className="text-[10px] text-stone-500 font-mono block">الهاتف: {worker.phone}</span>}
                       </div>
 
                       <div>

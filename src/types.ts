@@ -120,6 +120,7 @@ export interface Worker {
   dailyRate: number; // Daily salary rate (MAD)
   phone?: string;
   cnssNumber?: string;
+  cin?: string;
   initialAdvance?: number; // persistent direct advance on salary
 }
 

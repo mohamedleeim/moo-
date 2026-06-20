@@ -3,7 +3,8 @@ import { WorkItem, MeasurementLine, ProjectDetails, Project, GeneratedDecompte, 
 import { 
   initialWorkItems, 
   initialMeasurementLines, 
-  defaultProjectDetails 
+  defaultProjectDetails,
+  initialWorkers
 } from "./data/initialData";
 
 import Dashboard from "./components/Dashboard";
@@ -106,21 +107,7 @@ export default function App() {
             { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Démolition de l'ancien palier dégradé achevée." },
             { itemId: "item-3", progressPercentage: 40, lastUpdated: "2026-06-19", remarks: "Coulage des semelles S1 fait. Coffrage des chaînages en cours." }
           ],
-          workers: [
-            { id: "W1", name: "Hassan Sahouak", role: "Maâlem Tapisseur", dailyRate: 150, phone: "+212 611 123 456" },
-            { id: "W2", name: "Ali Elhdili", role: "Maâlem Maçon Traditional", dailyRate: 140, phone: "+212 622 234 567" },
-            { id: "W3", name: "Yassine Erraissi", role: "Maâlem Zelligeur", dailyRate: 150, phone: "+212 633 345 678" },
-            { id: "W4", name: "Ali Bnichou", role: "Maâlem Plâtrier", dailyRate: 150, phone: "+212 644 456 789" },
-            { id: "W5", name: "Mohamed Messaoudi", role: "Maâlem Sculpteur Bois", dailyRate: 200, phone: "+212 655 567 890" },
-            { id: "W6", name: "Mohmed Bel Madani", role: "Maâlem Charpentier", dailyRate: 150, phone: "+212 666 678 901" },
-            { id: "W7", name: "Mouad Farhane", role: "Maâlem Sculptures Plâtre", dailyRate: 200, phone: "+212 677 789 012" },
-            { id: "W8", name: "Khalid Abouaali", role: "Khedam (Aide-Maçon)", dailyRate: 120, phone: "+212 688 890 123" },
-            { id: "W9", name: "Mehdi Ferhane", role: "Khedam (Manoeuvre)", dailyRate: 130, phone: "+212 699 901 234" },
-            { id: "W10", name: "Abderahmane Ferhan", role: "Khedam (Manoeuvre)", dailyRate: 110, phone: "+212 610 012 345" },
-            { id: "W11", name: "Ali Belkassi", role: "Maâlem Staffeur", dailyRate: 150, phone: "+212 620 123 456" },
-            { id: "W12", name: "Mustapha El Hachimi", role: "Khedam (Manoeuvre)", dailyRate: 110, phone: "+212 630 234 567" },
-            { id: "W13", name: "Abderahman Ait Ali", role: "Khedam (Manoeuvre)", dailyRate: 130, phone: "+212 640 345 678" }
-          ],
+          workers: initialWorkers,
           pointages: [
             {
               id: "ptg-seed-1",
@@ -128,12 +115,12 @@ export default function App() {
               pointages: [
                 { workerId: "W2", status: "present", advancePaid: 0 },
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
                 { workerId: "W6", status: "present", advancePaid: 0 },
                 { workerId: "W7", status: "present", advancePaid: 0 },
                 { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "بداية الأوراش الرسمية لشهر يونيو 2026 بقصر الباهية"
             },
@@ -143,12 +130,12 @@ export default function App() {
               pointages: [
                 { workerId: "W2", status: "present", advancePaid: 0 },
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
-                { workerId: "W5", status: "present", advancePaid: 500 },
-                { workerId: "W6", status: "present", advancePaid: 0 },
+                { workerId: "W5", status: "present", advancePaid: 0 },
+                { workerId: "W6", status: "present", advancePaid: 500 },
                 { workerId: "W7", status: "present", advancePaid: 0 },
                 { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "سلفة 500 درهم مدفوعة نقداً للماعلم محمد المسعودي"
             },
@@ -158,13 +145,13 @@ export default function App() {
               pointages: [
                 { workerId: "W2", status: "present", advancePaid: 0 },
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
                 { workerId: "W6", status: "present", advancePaid: 0 },
                 { workerId: "W7", status: "present", advancePaid: 0 },
                 { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W10", status: "present", advancePaid: 500 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W16", status: "present", advancePaid: 500 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "سلفة مدفوعة للعامل عبد الرحمان فرحان بقيمة 500 درهم"
             },
@@ -174,11 +161,11 @@ export default function App() {
               pointages: [
                 { workerId: "W2", status: "present", advancePaid: 0 },
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
-                { workerId: "W7", status: "present", advancePaid: 1400 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W6", status: "present", advancePaid: 0 },
+                { workerId: "W8", status: "present", advancePaid: 1400 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "تسليم تسبيق للماعلم معاد فرحان بقيمة 1400 درهم"
             },
@@ -186,11 +173,11 @@ export default function App() {
               id: "ptg-seed-5",
               date: "2026-06-05",
               pointages: [
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W11", status: "present", advancePaid: 1400 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W6", status: "present", advancePaid: 0 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W17", status: "present", advancePaid: 1400 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "تسليم تسبيق للماعلم علي بلقاسي بقيمة 1400 درهم"
             },
@@ -199,11 +186,11 @@ export default function App() {
               date: "2026-06-06",
               pointages: [
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W9", status: "present", advancePaid: 600 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W6", status: "present", advancePaid: 0 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W15", status: "present", advancePaid: 600 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "تسليم تسبيق للعامل مهدي فرحان بقيمة 600 درهم"
             },
@@ -213,12 +200,12 @@ export default function App() {
               pointages: [
                 { workerId: "W2", status: "demi-journee", advancePaid: 0 },
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
-                { workerId: "W5", status: "present", advancePaid: 200 },
-                { workerId: "W7", status: "present", advancePaid: 0 },
+                { workerId: "W5", status: "present", advancePaid: 0 },
+                { workerId: "W6", status: "present", advancePaid: 200 },
                 { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W11", status: "present", advancePaid: 200 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W17", status: "present", advancePaid: 200 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "تسجيل حضور وتوزيع دفعة تسبيقات اليومية"
             },
@@ -227,12 +214,12 @@ export default function App() {
               date: "2026-06-11",
               pointages: [
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
-                { workerId: "W5", status: "present", advancePaid: 1000 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W9", status: "present", advancePaid: 0 },
-                { workerId: "W11", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W5", status: "present", advancePaid: 0 },
+                { workerId: "W6", status: "present", advancePaid: 1000 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W15", status: "present", advancePaid: 0 },
+                { workerId: "W17", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "حضور كامل للماعلمية واليد العاملة"
             },
@@ -242,11 +229,11 @@ export default function App() {
               pointages: [
                 { workerId: "W2", status: "present", advancePaid: 535 },
                 { workerId: "W3", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W10", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W6", status: "present", advancePaid: 0 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W16", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "تسليم تسبيق للماعلم علي الهديل بقيمة 535 درهم"
             },
@@ -256,10 +243,10 @@ export default function App() {
               pointages: [
                 { workerId: "W2", status: "present", advancePaid: 535 },
                 { workerId: "W3", status: "demi-journee", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W6", status: "present", advancePaid: 0 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "تسوية الحضور وتسليم الدفعة الثانية للماعلم علي الهديل"
             },
@@ -268,11 +255,11 @@ export default function App() {
               date: "2026-06-14",
               pointages: [
                 { workerId: "W1", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
-                { workerId: "W5", status: "present", advancePaid: 500 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W9", status: "demi-journee", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W5", status: "present", advancePaid: 0 },
+                { workerId: "W6", status: "present", advancePaid: 500 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W15", status: "demi-journee", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "حضور الماعلم حسن السهواك وباقي الأطقم"
             },
@@ -282,10 +269,10 @@ export default function App() {
               pointages: [
                 { workerId: "W1", status: "present", advancePaid: 0 },
                 { workerId: "W3", status: "present", advancePaid: 100 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
                 { workerId: "W5", status: "present", advancePaid: 0 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W6", status: "present", advancePaid: 0 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "تسليم تسبيق للماعلم ياسين المختار بقيمة 100 درهم"
             },
@@ -294,10 +281,10 @@ export default function App() {
               date: "2026-06-18",
               pointages: [
                 { workerId: "W1", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
-                { workerId: "W5", status: "present", advancePaid: 200 },
-                { workerId: "W8", status: "present", advancePaid: 500 },
-                { workerId: "W13", status: "present", advancePaid: 0 }
+                { workerId: "W5", status: "present", advancePaid: 0 },
+                { workerId: "W6", status: "present", advancePaid: 200 },
+                { workerId: "W13", status: "present", advancePaid: 500 },
+                { workerId: "W24", status: "present", advancePaid: 0 }
               ],
               note: "أشغال التلبيس والزليج التقليدي لورش قصر الباهية"
             },
@@ -306,10 +293,10 @@ export default function App() {
               date: "2026-06-19",
               pointages: [
                 { workerId: "W1", status: "present", advancePaid: 0 },
-                { workerId: "W4", status: "present", advancePaid: 0 },
-                { workerId: "W5", status: "present", advancePaid: 100 },
-                { workerId: "W8", status: "present", advancePaid: 0 },
-                { workerId: "W13", status: "demi-journee", advancePaid: 0 }
+                { workerId: "W5", status: "present", advancePaid: 0 },
+                { workerId: "W6", status: "present", advancePaid: 100 },
+                { workerId: "W13", status: "present", advancePaid: 0 },
+                { workerId: "W24", status: "demi-journee", advancePaid: 0 }
               ],
               note: "تجهيز الرسوم والفسيفساء تحت إشراف الماعلمية"
             }
