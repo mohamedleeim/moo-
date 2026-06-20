@@ -54,81 +54,148 @@ export default function App() {
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [pointages, setPointages] = useState<DailyPointage[]>([]);
 
-  // 1. Initial State Hydration (Local Storage first policy)
+  const [syncStatus, setSyncStatus] = useState<"connecting" | "local" | "offline">("connecting");
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  // 1. Initial State Hydration with optional Node server database synchronization
   useEffect(() => {
-    const cachedProjects = localStorage.getItem("bahia_multi_projects");
-    const cachedActiveId = localStorage.getItem("bahia_selected_project_id");
+    async function loadInitialDataAndSync() {
+      let loadedProjects: Project[] = [];
+      let isNodeServerActive = false;
 
-    let loadedProjects: Project[] = [];
-
-    if (cachedProjects) {
-      try { 
-        loadedProjects = JSON.parse(cachedProjects); 
-      } catch (e) { 
-        loadedProjects = []; 
-      }
-    }
-
-    // fallback: if no projects in cache, seed with the default Palais El Bahia demo project as first record
-    if (loadedProjects.length === 0) {
-      const defaultProjectRec: Project = {
-        id: "project-bahia",
-        name: "Projet de Reconstruction de Palier - El Bahia Marrakech",
-        description: "Restauration monument historique, Palais El Bahia Marrakech",
-        details: defaultProjectDetails,
-        workItems: initialWorkItems,
-        measurementLines: initialMeasurementLines,
-        suiviTravaux: [
-          { itemId: "item-1", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Fouilles terminées conformément à l'arborescence des calculs." },
-          { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Démolition de l'ancien palier dégradé achevée." },
-          { itemId: "item-3", progressPercentage: 40, lastUpdated: "2026-06-19", remarks: "Coulage des semelles S1 fait. Coffrage des chaînages en cours." }
-        ],
-        workers: [
-          { id: "W1", name: "Maâlem Driss", role: "Maçon Zelligeur", dailyRate: 220, phone: "+212 612 345 678" },
-          { id: "W2", name: "Maâlem Rachid", role: "Maçon Plâtrier", dailyRate: 200, phone: "+212 698 765 432" },
-          { id: "W3", name: "Abdeljalil", role: "Manœuvre", dailyRate: 120, phone: "+212 645 112 233" }
-        ],
-        pointages: [
-          {
-            id: "ptg-seed-1",
-            date: "2026-06-18",
-            pointages: [
-              { workerId: "W1", status: "present", advancePaid: 50 },
-              { workerId: "W2", status: "present", advancePaid: 0 },
-              { workerId: "W3", status: "present", advancePaid: 0 }
-            ],
-            note: "Appel de la journée du 18 juin. Tout le monde présent."
-          },
-          {
-            id: "ptg-seed-2",
-            date: "2026-06-19",
-            pointages: [
-              { workerId: "W1", status: "present", advancePaid: 0 },
-              { workerId: "W2", status: "present", advancePaid: 20 },
-              { workerId: "W3", status: "demi-journee", advancePaid: 0 }
-            ],
-            note: "Abdeljalil parti à mi-journée pour motif médical."
+      // Try to fetch projects from local Node Express Server API
+      try {
+        const response = await fetch("/api/projects");
+        if (response.ok) {
+          const result = await response.json();
+          if (result && result.success) {
+            isNodeServerActive = true;
+            if (Array.isArray(result.data) && result.data.length > 0) {
+              loadedProjects = result.data;
+              setSyncStatus("local");
+            }
           }
-        ],
-        expenses: [
-          { id: "exp-seed-1", date: "2026-06-15", category: "materiaux", label: "5 tonnes de chaux hydraulique", amount: 2500, quantity: 5, unitPrice: 500, remarks: "Fournisseur Chaux Tensift" },
-          { id: "exp-seed-2", date: "2026-06-16", category: "materiaux", label: "20 m² de dalles de Bejmat pré-cuit ocre", amount: 1800, quantity: 20, unitPrice: 90, remarks: "Atelier Artisanal Géliz" },
-          { id: "exp-seed-3", date: "2026-06-17", category: "chauffeur", label: "Livraison matériaux et trajets chantier", amount: 450, remarks: "Camion Benne Omar" },
-          { id: "exp-seed-4", date: "2026-06-18", category: "droguerie", label: "Droguerie : Acides, colles, brosses, clous et fils d'attache", amount: 270, remarks: "Droguerie Bab Doukkala" }
-        ]
-      };
-      loadedProjects = [defaultProjectRec];
+        }
+      } catch (err) {
+        console.log("Could not establish connection to local storage service. Falling back to localStorage.", err);
+      }
+
+      // Fall back to localStorage if Node server didn't provide active data
+      if (loadedProjects.length === 0) {
+        const cachedProjects = localStorage.getItem("bahia_multi_projects");
+        if (cachedProjects) {
+          try {
+            loadedProjects = JSON.parse(cachedProjects);
+          } catch (e) {
+            loadedProjects = [];
+          }
+        }
+      }
+
+      // fallback: if no projects in cache or server, seed with the default Palais El Bahia demo project
+      if (loadedProjects.length === 0) {
+        const defaultProjectRec: Project = {
+          id: "project-bahia",
+          name: "Projet de Reconstruction de Palier - El Bahia Marrakech",
+          description: "Restauration monument historique, Palais El Bahia Marrakech",
+          details: defaultProjectDetails,
+          workItems: initialWorkItems,
+          measurementLines: initialMeasurementLines,
+          suiviTravaux: [
+            { itemId: "item-1", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Fouilles terminées conformément à l'arborescence des calculs." },
+            { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Démolition de l'ancien palier dégradé achevée." },
+            { itemId: "item-3", progressPercentage: 40, lastUpdated: "2026-06-19", remarks: "Coulage des semelles S1 fait. Coffrage des chaînages en cours." }
+          ],
+          workers: [
+            { id: "W1", name: "Maâlem Driss", role: "Maçon Zelligeur", dailyRate: 220, phone: "+212 612 345 678" },
+            { id: "W2", name: "Maâlem Rachid", role: "Maçon Plâtrier", dailyRate: 200, phone: "+212 698 765 432" },
+            { id: "W3", name: "Abdeljalil", role: "Manœuvre", dailyRate: 120, phone: "+212 645 112 233" }
+          ],
+          pointages: [
+            {
+              id: "ptg-seed-1",
+              date: "2026-06-18",
+              pointages: [
+                { workerId: "W1", status: "present", advancePaid: 50 },
+                { workerId: "W2", status: "present", advancePaid: 0 },
+                { workerId: "W3", status: "present", advancePaid: 0 }
+              ],
+              note: "Appel de la journée du 18 juin. Tout le monde présent."
+            },
+            {
+              id: "ptg-seed-2",
+              date: "2026-06-19",
+              pointages: [
+                { workerId: "W1", status: "present", advancePaid: 0 },
+                { workerId: "W2", status: "present", advancePaid: 20 },
+                { workerId: "W3", status: "demi-journee", advancePaid: 0 }
+              ],
+              note: "Abdeljalil parti à mi-journée pour motif médical."
+            }
+          ],
+          expenses: [
+            { id: "exp-seed-1", date: "2026-06-15", category: "materiaux", label: "5 tonnes de chaux hydraulique", amount: 2500, quantity: 5, unitPrice: 500, remarks: "Fournisseur Chaux Tensift" },
+            { id: "exp-seed-2", date: "2026-06-16", category: "materiaux", label: "20 m² de dalles de Bejmat pré-cuit ocre", amount: 1800, quantity: 20, unitPrice: 90, remarks: "Atelier Artisanal Géliz" },
+            { id: "exp-seed-3", date: "2026-06-17", category: "chauffeur", label: "Livraison matériaux et trajets chantier", amount: 450, remarks: "Camion Benne Omar" },
+            { id: "exp-seed-4", date: "2026-06-18", category: "droguerie", label: "Droguerie : Acides, colles, brosses, clous et fils d'attache", amount: 270, remarks: "Droguerie Bab Doukkala" }
+          ]
+        };
+        loadedProjects = [defaultProjectRec];
+      }
+
+      setProjects(loadedProjects);
+
+      // Save immediately to local server if server is active (seeding or initial upload)
+      if (isNodeServerActive) {
+        setSyncStatus("local");
+        try {
+          await fetch("/api/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(loadedProjects)
+          });
+        } catch (e) {
+          console.error("Failed to seed Node server with initial data.", e);
+        }
+      } else {
+        setSyncStatus("offline");
+      }
+
+      // Cache to localStorage
       localStorage.setItem("bahia_multi_projects", JSON.stringify(loadedProjects));
+
+      // Restore active project selection
+      const cachedActiveId = localStorage.getItem("bahia_selected_project_id");
+      if (cachedActiveId && loadedProjects.some(p => p.id === cachedActiveId)) {
+        setSelectedProjectId(cachedActiveId);
+      } else {
+        setSelectedProjectId(null);
+      }
+
+      setHasHydrated(true);
     }
 
-    setProjects(loadedProjects);
-
-    if (cachedActiveId && loadedProjects.some(p => p.id === cachedActiveId)) {
-      setSelectedProjectId(cachedActiveId);
-    } else {
-      setSelectedProjectId(null);
-    }
+    loadInitialDataAndSync();
   }, []);
+
+  // 1b. Auto-synchronization on project change
+  useEffect(() => {
+    if (!hasHydrated || projects.length === 0) return;
+
+    // Save to localStorage
+    localStorage.setItem("bahia_multi_projects", JSON.stringify(projects));
+
+    // Save to server if server is available
+    if (syncStatus === "local") {
+      fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(projects)
+      }).catch(err => {
+        console.error("Auto-sync save to computer failed:", err);
+      });
+    }
+  }, [projects, hasHydrated, syncStatus]);
 
   // 2. Select Project context & populate active states
   useEffect(() => {
@@ -627,6 +694,26 @@ export default function App() {
 
             {/* Global Utility Actions (Exports) */}
             <div className="hidden sm:flex items-center gap-2">
+              {/* Node/Computer sync status badge */}
+              {syncStatus === "connecting" && (
+                <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-stone-100 border border-stone-200 text-stone-600 rounded-full text-[11px] font-mono font-bold select-none animate-pulse">
+                  <span className="h-2 w-2 rounded-full bg-stone-400" />
+                  <span>جاري الاتصال بالنظام...</span>
+                </div>
+              )}
+              {syncStatus === "local" && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full text-[11px] font-mono font-bold select-none" title="Toutes vos modifications sont immédiatement écrites dans le fichier 'projects_db.json' sur votre ordinateur de façon 100% sécurisée.">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px]">💾 حفظ تلقائي في الحاسوب</span>
+                </div>
+              )}
+              {syncStatus === "offline" && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-full text-[11px] font-mono font-bold select-none" title="Vos modifications sont stockées localement dans votre navigateur. Lancez le serveur Node local pour enregistrer dans un fichier sur votre disque dur.">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-450" />
+                  <span className="text-[10px]">📍 حفظ مؤقت بالمتصفح</span>
+                </div>
+              )}
+
               <button
                 onClick={handleExportBackup}
                 className="p-2 text-stone-500 hover:text-brand-brown hover:bg-stone-100 rounded-lg transition"
