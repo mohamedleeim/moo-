@@ -120,11 +120,12 @@ export interface Worker {
   dailyRate: number; // Daily salary rate (MAD)
   phone?: string;
   cnssNumber?: string;
+  initialAdvance?: number; // persistent direct advance on salary
 }
 
 export interface WorkDayPointage {
   workerId: string;
-  status: 'present' | 'demi-journee' | 'absent' | 'conge' | 'double-journee';
+  status: 'present' | 'demi-journee' | 'absent' | 'conge' | 'double-journee' | 'jour-et-demi';
   advancePaid?: number; // Advance payments on salary (avances)
   remarks?: string;
 }
