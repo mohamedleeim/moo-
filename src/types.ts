@@ -100,7 +100,7 @@ export interface GeneratedDecompte {
   notes?: string;
 }
 
-export type ExpenseCategory = 'materiel' | 'materiaux' | 'chauffeur' | 'droguerie' | 'pieces' | 'autre';
+export type ExpenseCategory = string;
 
 export interface Expense {
   id: string;

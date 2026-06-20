@@ -1,24 +1,39 @@
 import express from "express";
 import fs from "fs";
 import path from "path";
+import os from "os";
 import { createServer as createViteServer } from "vite";
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
   
-  // Storage file path for projects database
-  const DB_FILE = path.join(process.cwd(), "projects_db.json");
+  // Storage file path for projects database (Documents directory)
+  const HOME_DIR = os.homedir();
+  const DB_DIR = path.join(HOME_DIR, "Documents", "AlBahia_Metre");
+  const DB_FILE = path.join(DB_DIR, "projects_db.json");
+
+  // Ensure documents subdirectory directory exists
+  try {
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+    }
+  } catch (err) {
+    console.error("Could not create Documents/AlBahia_Metre directory, using current directory instead:", err);
+  }
+
+  // Backup file path in case standard is not writable
+  const ACTUAL_DB_FILE = fs.existsSync(DB_DIR) ? DB_FILE : path.join(process.cwd(), "projects_db.json");
 
   // Middlewares
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  app.use(express.json({ limit: "150mb" }));
+  app.use(express.urlencoded({ limit: "150mb", extended: true }));
 
   // API: Get all projects
   app.get("/api/projects", (req, res) => {
     try {
-      if (fs.existsSync(DB_FILE)) {
-        const fileContent = fs.readFileSync(DB_FILE, "utf-8");
+      if (fs.existsSync(ACTUAL_DB_FILE)) {
+        const fileContent = fs.readFileSync(ACTUAL_DB_FILE, "utf-8");
         const data = JSON.parse(fileContent);
         return res.json({ success: true, data });
       } else {
@@ -39,7 +54,7 @@ async function startServer() {
         return res.status(400).json({ success: false, error: "Invalid data format. Expected an array of projects." });
       }
 
-      fs.writeFileSync(DB_FILE, JSON.stringify(projects, null, 2), "utf-8");
+      fs.writeFileSync(ACTUAL_DB_FILE, JSON.stringify(projects, null, 2), "utf-8");
       return res.json({ success: true, message: "Data saved successfully to computer." });
     } catch (error: any) {
       console.error("Error writing to projects database:", error);

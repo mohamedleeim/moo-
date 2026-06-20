@@ -44,6 +44,40 @@ export default function GestionDepenses({
 
   const [filterCategory, setFilterCategory] = useState<string>("Tous");
 
+  // Dynamic custom expense categories
+  const [customCategories, setCustomCategories] = useState<string[]>(() => {
+    const standardCategories = ["materiaux", "materiel", "chauffeur", "droguerie", "pieces", "autre"];
+    const uniqueInExpenses = Array.from(new Set(expenses.map(e => e.category)))
+      .filter(cat => cat && !standardCategories.includes(cat));
+    return uniqueInExpenses;
+  });
+
+  const [newCatName, setNewCatName] = useState("");
+
+  const handleAddCustomCategory = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const trimmed = newCatName.trim();
+    if (!trimmed) return;
+
+    const standardCategories = ["materiaux", "materiel", "chauffeur", "droguerie", "pieces", "autre"];
+    if (standardCategories.includes(trimmed.toLowerCase())) {
+      setCategory(trimmed.toLowerCase() as ExpenseCategory);
+      setNewCatName("");
+      return;
+    }
+
+    if (customCategories.includes(trimmed)) {
+      setCategory(trimmed);
+      setNewCatName("");
+      return;
+    }
+
+    const updatedCustoms = [...customCategories, trimmed];
+    setCustomCategories(updatedCustoms);
+    setCategory(trimmed);
+    setNewCatName("");
+  };
+
   // Worker timesheet wages calculation
   const calculateTotalWages = (): number => {
     let wagesSum = 0;
@@ -110,7 +144,7 @@ export default function GestionDepenses({
 
   // Calculations for total expenses
   const expenseSummary = () => {
-    const categoriesSum: { [key in ExpenseCategory | 'main_doeuvre']: number } = {
+    const categoriesSum: { [key: string]: number } = {
       materiel: 0,
       materiaux: 0,
       chauffeur: 0,
@@ -120,17 +154,21 @@ export default function GestionDepenses({
       main_doeuvre: timesheetWages
     };
 
+    // Initialize loaded custom categories to 0
+    customCategories.forEach(cat => {
+      categoriesSum[cat] = 0;
+    });
+
     expenses.forEach(exp => {
-      // Normalize category keys to prevent spelling or typing errors
-      let catKey: ExpenseCategory = exp.category;
-      if (catKey === "matériels" as any || catKey === "materiel" as any) catKey = "materiel";
-      if (catKey === "matériaux" as any || catKey === "materiaux" as any) catKey = "materiaux";
-      if (catKey === "pièces" as any || catKey === "pieces" as any) catKey = "pieces";
+      let catKey = exp.category;
+      if (catKey === "matériels" || catKey === "materiel") catKey = "materiel";
+      if (catKey === "matériaux" || catKey === "materiaux") catKey = "materiaux";
+      if (catKey === "pièces" || catKey === "pieces") catKey = "pieces";
       
       if (categoriesSum[catKey] !== undefined) {
         categoriesSum[catKey] += exp.amount;
       } else {
-        categoriesSum.autre += exp.amount;
+        categoriesSum[catKey] = exp.amount;
       }
     });
 
@@ -171,8 +209,10 @@ export default function GestionDepenses({
         return { label: "Pièces de Rechange", color: "bg-rose-50 text-rose-700 border-rose-200", icon: Wrench };
       case "main_doeuvre":
         return { label: "M.O (Pointage Ouvriers)", color: "bg-emerald-50 text-emerald-700 border-emerald-250", icon: Hammer };
-      default:
+      case "autre":
         return { label: "Autres charges", color: "bg-stone-50 text-stone-700 border-stone-200", icon: Tag };
+      default:
+        return { label: cat, color: "bg-teal-50 text-teal-850 border-teal-200", icon: Tag };
     }
   };
 
@@ -180,8 +220,8 @@ export default function GestionDepenses({
     ? expenses 
     : expenses.filter(exp => {
         const cat = exp.category;
-        if (filterCategory === "materiel" && (cat === "materiel" || cat === "matériel" as any)) return true;
-        if (filterCategory === "materiaux" && (cat === "materiaux" || cat === "matériaux" as any)) return true;
+        if (filterCategory === "materiel" && (cat === "materiel" || cat === "matériel")) return true;
+        if (filterCategory === "materiaux" && (cat === "materiaux" || cat === "matériaux")) return true;
         return cat === filterCategory;
       });
 
@@ -289,8 +329,8 @@ export default function GestionDepenses({
               <label className="text-[10px] text-stone-500 uppercase tracking-wider font-bold block">Catégorie Dépense</label>
               <select
                 value={category}
-                onChange={e => setCategory(e.target.value as ExpenseCategory)}
-                className="w-full p-2.5 bg-stone-50 border border-stone-250 rounded-lg text-stone-900 focus:outline-none"
+                onChange={e => setCategory(e.target.value)}
+                className="w-full p-2.5 bg-stone-50 border border-stone-250 rounded-lg text-stone-900 focus:outline-none font-medium"
               >
                 <option value="materiaux">🧱 Matériaux (Ciment, Sable, Bejmat, Zellij...)</option>
                 <option value="materiel">⚙️ Engins & Matériel (Bétonnières, Échafaudage...)</option>
@@ -298,7 +338,37 @@ export default function GestionDepenses({
                 <option value="droguerie">🎨 Droguerie (Vis, Clous, Peinture, Droguerie...)</option>
                 <option value="pieces">🔧 Pièces détachées & Maintenance mécanique</option>
                 <option value="autre">📦 Autre charge de chantier</option>
+                {customCategories.map(cat => (
+                  <option key={cat} value={cat}>📁 {cat}</option>
+                ))}
               </select>
+            </div>
+
+            {/* Custom category input field / حقل إضافة فئة مخصصة */}
+            <div className="bg-stone-50 border border-stone-200 p-3 rounded-xl space-y-2.5">
+              <label className="text-[9.5px] text-stone-500 uppercase tracking-wider font-extrabold block">
+                ➕ إضافة فئة مصاريف مخصصة (Insérer Catégorie)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="مثال: مطبوعات، تأمينات، وجبات..."
+                  value={newCatName}
+                  onChange={e => setNewCatName(e.target.value)}
+                  className="flex-1 p-2 bg-white border border-stone-250 rounded-lg text-xs text-stone-900 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCustomCategory}
+                  className="px-3 py-2 bg-brand-gold hover:bg-stone-900 hover:text-white text-brand-brown rounded-lg text-xs font-bold transition flex items-center gap-1"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>إضافة</span>
+                </button>
+              </div>
+              <p className="text-[9.5px] text-stone-400 font-light leading-snug">
+                ستضاف هذه الفئة فوراً في قائمة الاختبار والفرع السريع أعلاه.
+              </p>
             </div>
 
             <div className="space-y-1">
@@ -442,25 +512,27 @@ export default function GestionDepenses({
             <p className="text-stone-500 text-[10px]">Liste chronologique de vos débours matériels, fournitures & services.</p>
           </div>
 
-          <div className="flex gap-1">
-            {["Tous", "materiaux", "materiel", "chauffeur", "droguerie", "pieces", "autre"].map(cat => {
-              let label = "Tous";
-              if (cat === "materiaux") label = "Matériaux";
-              if (cat === "materiel") label = "Matériel";
-              if (cat === "chauffeur") label = "Chauffeur";
-              if (cat === "droguerie") label = "Droguerie";
-              if (cat === "pieces") label = "Pièces";
-              if (cat === "autre") label = "Autres";
+          <div className="flex gap-1 flex-wrap font-sans">
+            {["Tous", "materiaux", "materiel", "chauffeur", "droguerie", "pieces", "autre", ...customCategories].map(cat => {
+              let label = cat;
+              if (cat === "Tous") label = "Tous";
+              else if (cat === "materiaux") label = "Matériaux";
+              else if (cat === "materiel") label = "Matériel";
+              else if (cat === "chauffeur") label = "Chauffeur";
+              else if (cat === "droguerie") label = "Droguerie";
+              else if (cat === "pieces") label = "Pièces";
+              else if (cat === "autre") label = "Autres";
 
               return (
                 <button
                   key={cat}
                   onClick={() => setFilterCategory(cat)}
-                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition ${
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition truncate max-w-[150px] ${
                     filterCategory === cat
                       ? "bg-brand-brown text-white"
                       : "text-stone-500 hover:bg-stone-200"
                   }`}
+                  title={label}
                 >
                   {label}
                 </button>
