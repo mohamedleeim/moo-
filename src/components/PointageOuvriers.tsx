@@ -18,7 +18,9 @@ import {
   DollarSign,
   Plus,
   X,
-  Eye
+  Eye,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 interface PointageOuvriersProps {
@@ -48,6 +50,32 @@ export default function PointageOuvriers({
   // Pointage worksheet states
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
   const [timesheetNotes, setTimesheetNotes] = useState("");
+
+  const formatFriendlyDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      
+      const optionsArray: Intl.DateTimeFormatOptions = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      
+      const frDate = d.toLocaleDateString('fr-FR', optionsArray);
+      let arDate = "";
+      try {
+        arDate = d.toLocaleDateString('ar-MA', optionsArray);
+      } catch {
+        arDate = d.toLocaleDateString('ar', optionsArray);
+      }
+      
+      return `${arDate} • ${frDate}`;
+    } catch {
+      return dateStr;
+    }
+  };
 
   // Active worksheet values (temporary editing holds for selectedDate)
   const getPointageForDate = (dateStr: string): DailyPointage => {
@@ -524,21 +552,69 @@ export default function PointageOuvriers({
         <div className="bg-white lg:col-span-8 rounded-2xl border border-stone-250 p-5 shadow-xs space-y-4">
           
           {/* Timesheet Date header selecting details combo */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-150 pb-4">
-            <div className="flex items-center gap-2 select-none">
-              <Calendar className="h-5 w-5 text-brand-gold" />
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-stone-150 pb-4">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-brand-gold shrink-0" />
               <div>
                 <h3 className="font-sans font-extrabold text-stone-900 text-sm">Feuille Journalière de Pointage</h3>
-                <p className="text-stone-500 text-[10.5px]">Sélectionnez la date pour dresser l'appel de vos équippes.</p>
+                <p className="text-brand-brown text-[11px] font-bold mt-0.5">
+                  {formatFriendlyDate(selectedDate)}
+                </p>
               </div>
             </div>
 
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={e => setSelectedDate(e.target.value)}
-              className="p-2.5 text-xs font-mono font-bold bg-stone-50 border border-stone-250 rounded-xl focus:outline-none"
-            />
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Back 1 Day */}
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date(selectedDate);
+                  d.setDate(d.getDate() - 1);
+                  setSelectedDate(d.toISOString().slice(0, 10));
+                }}
+                className="p-2 bg-white hover:bg-stone-50 border border-stone-250 hover:border-stone-350 text-stone-700 rounded-lg shadow-2xs transition-all flex items-center justify-center font-bold text-xs"
+                title="Jour précédent (-1j)"
+              >
+                <ChevronLeft className="h-4.5 w-4.5" />
+                <span className="sr-only">Jour précédent</span>
+              </button>
+
+              {/* Native Date Picker */}
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={e => {
+                  if (e.target.value) {
+                    setSelectedDate(e.target.value);
+                  }
+                }}
+                className="p-2 text-xs font-mono font-bold bg-stone-50 border border-stone-250 hover:border-stone-350 rounded-lg text-stone-900 focus:outline-none focus:ring-1 focus:ring-brand-gold cursor-pointer"
+              />
+
+              {/* Forward 1 Day */}
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date(selectedDate);
+                  d.setDate(d.getDate() + 1);
+                  setSelectedDate(d.toISOString().slice(0, 10));
+                }}
+                className="p-2 bg-white hover:bg-stone-50 border border-stone-250 hover:border-stone-350 text-stone-700 rounded-lg shadow-2xs transition-all flex items-center justify-center font-bold text-xs"
+                title="Jour suivant (+1j)"
+              >
+                <ChevronRight className="h-4.5 w-4.5" />
+                <span className="sr-only">Jour suivant</span>
+              </button>
+
+              {/* Today Reset Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedDate(new Date().toISOString().slice(0, 10))}
+                className="px-3 py-2 bg-brand-gold/10 hover:bg-brand-gold/20 text-brand-gold border border-brand-gold/30 hover:border-brand-gold/55 text-[10.5px] font-bold rounded-lg transition-all"
+              >
+                اليوم (Aujourd'hui)
+              </button>
+            </div>
           </div>
 
           {/* Quick instructions indicator details banner */}

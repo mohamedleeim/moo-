@@ -314,6 +314,15 @@ export default function App() {
       // Ensure reference project-bahia is always updated with latest reference work items and measurement lines
       loadedProjects = loadedProjects.map(p => {
         if (p.id === "project-bahia") {
+          const projectWorkers = p.workers || [];
+          const mergedWorkers = [...projectWorkers];
+          initialWorkers.forEach(iw => {
+            const exists = mergedWorkers.some(w => w.id === iw.id);
+            if (!exists) {
+              mergedWorkers.push(iw);
+            }
+          });
+
           return {
             ...p,
             name: "Travaux de Réhabilitation et de Restauration du Palais BAHIA - Marrakech",
@@ -321,6 +330,7 @@ export default function App() {
             details: defaultProjectDetails,
             workItems: initialWorkItems,
             measurementLines: initialMeasurementLines,
+            workers: mergedWorkers,
             suiviTravaux: [
               { itemId: "item-1", progressPercentage: 40, lastUpdated: "2026-06-18", remarks: "Installation de chantier complétée à 40%." },
               { itemId: "item-2", progressPercentage: 100, lastUpdated: "2026-06-18", remarks: "Échafaudages et étayages terminés." },
