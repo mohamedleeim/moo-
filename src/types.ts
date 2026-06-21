@@ -111,6 +111,7 @@ export interface Expense {
   quantity?: number;
   unitPrice?: number;
   remarks?: string;
+  bonLivraison?: string;
 }
 
 export interface Worker {

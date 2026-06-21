@@ -15,7 +15,10 @@ import {
   Paintbrush,
   Hammer,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Pencil,
+  Save,
+  X
 } from "lucide-react";
 
 interface GestionDepensesProps {
@@ -41,8 +44,75 @@ export default function GestionDepenses({
   const [quantityInput, setQuantityInput] = useState("");
   const [unitPriceInput, setUnitPriceInput] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [bonLivraison, setBonLivraison] = useState("");
 
   const [filterCategory, setFilterCategory] = useState<string>("Tous");
+
+  // Editing Expense state
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [editDate, setEditDate] = useState("");
+  const [editCategory, setEditCategory] = useState<ExpenseCategory>("materiaux");
+  const [editLabel, setEditLabel] = useState("");
+  const [editAmountInput, setEditAmountInput] = useState("");
+  const [editQuantityInput, setEditQuantityInput] = useState("");
+  const [editUnitPriceInput, setEditUnitPriceInput] = useState("");
+  const [editRemarks, setEditRemarks] = useState("");
+  const [editBonLivraison, setEditBonLivraison] = useState("");
+
+  const handleOpenEditExpenseModal = (exp: Expense) => {
+    setEditingExpense(exp);
+    setEditDate(exp.date);
+    setEditCategory(exp.category);
+    setEditLabel(exp.label);
+    setEditAmountInput(exp.amount !== undefined ? String(exp.amount) : "");
+    setEditQuantityInput(exp.quantity !== undefined ? String(exp.quantity) : "");
+    setEditUnitPriceInput(exp.unitPrice !== undefined ? String(exp.unitPrice) : "");
+    setEditRemarks(exp.remarks || "");
+    setEditBonLivraison(exp.bonLivraison || "");
+  };
+
+  const handleSaveEditedExpense = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingExpense) return;
+
+    if (!editLabel.trim()) {
+      alert("Veuillez saisir une désignation.");
+      return;
+    }
+
+    let calculatedAmount = parseFloat(editAmountInput);
+    const qty = parseFloat(editQuantityInput);
+    const price = parseFloat(editUnitPriceInput);
+
+    if (isNaN(calculatedAmount)) {
+      if (!isNaN(qty) && !isNaN(price)) {
+        calculatedAmount = qty * price;
+      } else {
+        alert("Veuillez saisir un montant valide ou une quantité et prix unitaire.");
+        return;
+      }
+    }
+
+    const updated = expenses.map(exp => {
+      if (exp.id === editingExpense.id) {
+        return {
+          ...exp,
+          date: editDate,
+          category: editCategory,
+          label: editLabel.trim(),
+          amount: calculatedAmount,
+          quantity: isNaN(qty) ? undefined : qty,
+          unitPrice: isNaN(price) ? undefined : price,
+          remarks: editRemarks.trim() || undefined,
+          bonLivraison: editBonLivraison.trim() || undefined
+        };
+      }
+      return exp;
+    });
+
+    onUpdateExpenses(updated);
+    setEditingExpense(null);
+  };
 
   // Dynamic custom expense categories
   const [customCategories, setCustomCategories] = useState<string[]>(() => {
@@ -123,7 +193,8 @@ export default function GestionDepenses({
       amount: calculatedAmount,
       quantity: isNaN(qty) ? undefined : qty,
       unitPrice: isNaN(price) ? undefined : price,
-      remarks: remarks.trim() || undefined
+      remarks: remarks.trim() || undefined,
+      bonLivraison: bonLivraison.trim() || undefined
     };
 
     onUpdateExpenses([...expenses, newExpense]);
@@ -134,6 +205,7 @@ export default function GestionDepenses({
     setQuantityInput("");
     setUnitPriceInput("");
     setRemarks("");
+    setBonLivraison("");
   };
 
   const handleDeleteExpense = (id: string) => {
@@ -428,15 +500,28 @@ export default function GestionDepenses({
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] text-stone-500 uppercase tracking-wider font-bold block">Remarques / Fournisseur</label>
-              <input
-                type="text"
-                placeholder="Optionnel..."
-                value={remarks}
-                onChange={e => setRemarks(e.target.value)}
-                className="w-full p-2 bg-stone-50 border border-stone-250 rounded-lg text-stone-900 focus:outline-none text-[11px]"
-              />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <label className="text-[9px] text-stone-500 uppercase tracking-wider font-bold block">N° Bon Livraison (Opt)</label>
+                <input
+                  type="text"
+                  placeholder="ex: BL-1049"
+                  value={bonLivraison}
+                  onChange={e => setBonLivraison(e.target.value)}
+                  className="w-full p-2 bg-stone-50 border border-stone-250 rounded-lg text-stone-900 focus:outline-none text-[11px] font-mono font-black placeholder-stone-300 uppercase"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[9px] text-stone-500 uppercase tracking-wider font-bold block">Remarques / Fournisseur</label>
+                <input
+                  type="text"
+                  placeholder="Optionnel..."
+                  value={remarks}
+                  onChange={e => setRemarks(e.target.value)}
+                  className="w-full p-2 bg-stone-50 border border-stone-250 rounded-lg text-stone-900 focus:outline-none text-[11px] placeholder-stone-300"
+                />
+              </div>
             </div>
 
             <button
@@ -552,7 +637,7 @@ export default function GestionDepenses({
                 <th className="px-4 py-3">Quantité & P.U</th>
                 <th className="px-4 py-3 text-right">Montant Budgété</th>
                 <th className="px-4 py-3 text-left">Explications / Notes</th>
-                <th className="px-4 py-3 w-10">Act</th>
+                <th className="px-4 py-3 w-20">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-150">
@@ -568,8 +653,13 @@ export default function GestionDepenses({
                         {details.label.split(" (")[0]}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-bold text-stone-850">
-                      {exp.label}
+                    <td className="px-4 py-3 text-stone-850">
+                      <div className="font-bold">{exp.label}</div>
+                      {exp.bonLivraison && (
+                        <div className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded font-mono text-[9px] font-black uppercase tracking-wider select-none">
+                          📄 BL: {exp.bonLivraison}
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3 font-semibold text-stone-500 text-center">
                       {exp.quantity !== undefined && exp.unitPrice !== undefined ? (
@@ -586,14 +676,23 @@ export default function GestionDepenses({
                     <td className="px-4 py-3 text-stone-500 font-light truncate max-w-xs capitalize">
                       {exp.remarks || <span className="text-stone-300">—</span>}
                     </td>
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => handleDeleteExpense(exp.id)}
-                        className="p-1 text-stone-400 hover:text-red-650 hover:bg-red-50 rounded transition"
-                        title="Détruire cette ligne"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                    <td className="px-4 py-3 text-center border-l border-stone-100 select-none">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => handleOpenEditExpenseModal(exp)}
+                          className="p-1 text-stone-400 hover:text-emerald-600 hover:bg-emerald-50 rounded transition"
+                          title="Modifier cette dépense"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteExpense(exp.id)}
+                          className="p-1 text-stone-400 hover:text-red-650 hover:bg-red-50 rounded transition"
+                          title="Détruire cette ligne"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -610,6 +709,164 @@ export default function GestionDepenses({
           </table>
         </div>
       </div>
+
+      {/* ==================== EXPENSE EDIT MODAL ==================== */}
+      {editingExpense && (
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingExpense(null);
+            }
+          }}
+          className="fixed inset-0 bg-stone-900/80 backdrop-blur-xs flex items-center justify-center z-50 p-4"
+        >
+          <div className="bg-white rounded-2xl border border-stone-250 w-full max-w-md p-5 shadow-xl space-y-4 animate-in fade-in zoom-in duration-150">
+            <div className="flex justify-between items-center border-b border-stone-150 pb-3">
+              <div className="flex items-center gap-2">
+                <Pencil className="h-5 w-5 text-brand-gold shrink-0" />
+                <div>
+                  <h3 className="font-sans font-black text-xs uppercase text-stone-900 tracking-wider">تعديل تفاصيل المصروف / الشراء</h3>
+                  <p className="text-stone-400 text-[10px]">Modifier la ligne de dépense</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setEditingExpense(null)}
+                className="p-1 hover:bg-stone-100 rounded-lg text-stone-400 hover:text-stone-700 transition animate-none"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditedExpense} className="space-y-4 text-xs font-sans text-right">
+              <div className="space-y-1">
+                <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Date / التاريخ *</label>
+                <input
+                  type="date"
+                  required
+                  value={editDate}
+                  onChange={e => setEditDate(e.target.value)}
+                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2.5 text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Catégorie / الفئة *</label>
+                <select
+                  value={editCategory}
+                  onChange={e => setEditCategory(e.target.value)}
+                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2.5 text-stone-900 focus:ring-1 focus:ring-brand-gold focus:outline-none text-left"
+                >
+                  <option value="materiaux">🧱 Matériaux (Ciment, Sable, Bejmat, Zellij...)</option>
+                  <option value="materiel">⚙️ Engins & Matériel (Bétonnières, Échafaudage...)</option>
+                  <option value="chauffeur">🚗 Chauffeur & Transports (Gazole, Trajet, Driver...)</option>
+                  <option value="droguerie">🎨 Droguerie (Vis, Clous, Peinture, Droguerie...)</option>
+                  <option value="pieces">🔧 Pièces détachées & Maintenance mécanique</option>
+                  <option value="autre">📦 Autre charge de chantier</option>
+                  {customCategories.map(cat => (
+                    <option key={cat} value={cat}>📁 {cat}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Désignation de l'achat / البيان المالي *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="ex: Ciment de Marrakech"
+                  value={editLabel}
+                  onChange={e => setEditLabel(e.target.value)}
+                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2.5 text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Quantité / الكمية</label>
+                  <input
+                    type="number"
+                    step="any"
+                    placeholder="ex: 10"
+                    value={editQuantityInput}
+                    onChange={e => setEditQuantityInput(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Price Unitaire / ثمن الوحدة</label>
+                  <input
+                    type="number"
+                    step="any"
+                    placeholder="ex: 70"
+                    value={editUnitPriceInput}
+                    onChange={e => setEditUnitPriceInput(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between items-center text-left">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold">Montant Brut Total / المبلغ الإجمالي (MAD)</label>
+                  {editQuantityInput && editUnitPriceInput && (
+                    <span className="text-[9px] text-emerald-600 font-bold font-mono">Auto: {((parseFloat(editQuantityInput) || 0) * (parseFloat(editUnitPriceInput) || 0)).toFixed(2)}</span>
+                  )}
+                </div>
+                <input
+                  type="number"
+                  step="any"
+                  placeholder={editQuantityInput && editUnitPriceInput ? String((parseFloat(editQuantityInput) || 0) * (parseFloat(editUnitPriceInput) || 0)) : "ex: 700"}
+                  value={editAmountInput}
+                  onChange={e => setEditAmountInput(e.target.value)}
+                  className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2.5 font-bold text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">N° Bon Livraison / رقم وصل التسليم</label>
+                  <input
+                    type="text"
+                    placeholder="ex: BL-150-A"
+                    value={editBonLivraison}
+                    onChange={e => setEditBonLivraison(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900 font-mono font-bold uppercase text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-stone-500 uppercase tracking-wider block font-bold text-left">Notes / المورد والملاحظات</label>
+                  <input
+                    type="text"
+                    placeholder="Optionnel..."
+                    value={editRemarks}
+                    onChange={e => setEditRemarks(e.target.value)}
+                    className="w-full text-xs bg-stone-50 border border-stone-250 rounded-lg p-2 text-stone-900 text-left focus:ring-1 focus:ring-brand-gold focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 justify-end pt-3 border-t border-stone-150 select-none">
+                <button
+                  type="button"
+                  onClick={() => setEditingExpense(null)}
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-900 rounded-lg font-bold transition text-[11px]"
+                >
+                  إلغاء (Annuler)
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-brand-brown hover:bg-stone-950 text-brand-gold hover:text-white rounded-lg font-bold transition text-[11px] flex items-center gap-1"
+                >
+                  <Save className="h-3.5 w-3.5" />
+                  حفظ التعديلات (Enregistrer)
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

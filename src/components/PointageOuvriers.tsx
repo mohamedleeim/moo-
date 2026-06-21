@@ -21,7 +21,8 @@ import {
   Eye,
   ChevronLeft,
   ChevronRight,
-  Pencil
+  Pencil,
+  Search
 } from "lucide-react";
 
 interface PointageOuvriersProps {
@@ -103,6 +104,28 @@ export default function PointageOuvriers({
   // Pointage worksheet states
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
   const [timesheetNotes, setTimesheetNotes] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [recapSearchQuery, setRecapSearchQuery] = useState("");
+
+  const filteredWorkers = workers.filter(w => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase().trim();
+    return (
+      w.name.toLowerCase().includes(query) ||
+      (w.role && w.role.toLowerCase().includes(query)) ||
+      (w.cin && w.cin.toLowerCase().includes(query))
+    );
+  });
+
+  const recapFilteredWorkers = workers.filter(w => {
+    if (!recapSearchQuery.trim()) return true;
+    const query = recapSearchQuery.toLowerCase().trim();
+    return (
+      w.name.toLowerCase().includes(query) ||
+      (w.role && w.role.toLowerCase().includes(query)) ||
+      (w.cin && w.cin.toLowerCase().includes(query))
+    );
+  });
 
   const formatFriendlyDate = (dateStr: string) => {
     try {
@@ -698,9 +721,30 @@ export default function PointageOuvriers({
             </div>
           </div>
 
+          {/* Worker Search Bar */}
+          <div className="relative mb-2">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+            <input
+              type="text"
+              placeholder="🔍 ابحث عن عامل بالاسم أو الحرفة أو رقم البطاقة... (Rechercher un ouvrier)"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-stone-50 hover:bg-stone-100/50 focus:bg-white border border-stone-250 hover:border-stone-350 focus:border-brand-gold rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-brand-gold text-right transition"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:bg-stone-200 text-stone-400 hover:text-stone-700 rounded-full transition"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+          </div>
+
           {/* Worksheet Check-in Grid roster list */}
           <div className="divide-y divide-stone-150 text-xs font-sans">
-            {workers.map(w => {
+            {filteredWorkers.map(w => {
               // Extract current presence in selectedDate
               const ptItem = activeDayPointage.pointages.find(p => p.workerId === w.id) || {
                 workerId: w.id,
@@ -799,9 +843,11 @@ export default function PointageOuvriers({
               );
             })}
 
-            {workers.length === 0 && (
+            {filteredWorkers.length === 0 && (
               <div className="py-8 text-center text-stone-400 italic">
-                La liste des ouvriers est vide. Veuillez d'abord ajouter des ouvriers dans l'onglet à gauche.
+                {workers.length === 0 
+                  ? "La liste des ouvriers est vide. Veuillez d'abord ajouter des ouvriers dans l'onglet à gauche."
+                  : "Aucun ouvrier ne correspond à votre recherche (لاتوجد نتائج تطابق بحثك)."}
               </div>
             )}
           </div>
@@ -833,6 +879,29 @@ export default function PointageOuvriers({
           </button>
         </div>
 
+        {/* Recap Search Bar */}
+        <div className="px-5 pt-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+            <input
+              type="text"
+              placeholder="🔍 ابحث في كشف الأجور باسم العامل أو حرفته أو رقم ب.ت.و... (Rechercher un ouvrier)"
+              value={recapSearchQuery}
+              onChange={e => setRecapSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-stone-50 hover:bg-stone-100/50 focus:bg-white border border-stone-250 hover:border-stone-350 focus:border-brand-gold rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-brand-gold text-right transition"
+            />
+            {recapSearchQuery && (
+              <button
+                type="button"
+                onClick={() => setRecapSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:bg-stone-200 text-stone-400 hover:text-stone-700 rounded-full transition"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Recap Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left text-stone-600 border-collapse">
@@ -853,7 +922,7 @@ export default function PointageOuvriers({
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-150">
-              {workers.map(w => {
+              {recapFilteredWorkers.map(w => {
                 const recap = getWorkerRecap(w);
                 return (
                   <tr key={w.id} className="hover:bg-stone-50/25 transition">
@@ -957,10 +1026,12 @@ export default function PointageOuvriers({
                 );
               })}
 
-              {workers.length === 0 && (
+              {recapFilteredWorkers.length === 0 && (
                 <tr>
-                  <td colSpan={11} className="py-8 text-center text-stone-400 italic font-light text-xs">
-                    لم يتم تسجيل أي عامل في جدول الحسابات لتفصيل الأجور.
+                  <td colSpan={12} className="py-8 text-center text-stone-400 italic font-light text-xs">
+                    {workers.length === 0 
+                      ? "لم يتم تسجيل أي عامل في جدول الحسابات لتفصيل الأجور."
+                      : "لا توجد نتائج تطابق بحثك عن هذا العامل (Aucun résultat)."}
                   </td>
                 </tr>
               )}
